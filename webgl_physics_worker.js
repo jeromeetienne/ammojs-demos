@@ -3,7 +3,7 @@ var Module = { TOTAL_MEMORY: 512*1024*1024 };
 
 importScripts('vendor/three.js/examples/js/libs/ammo.js');
 
-var NUM = 0, NUMRANGE = [];
+var numBoxes = 0;
 
 // Bullet-interfacing code
 
@@ -36,7 +36,7 @@ groundTransform.setOrigin(new Ammo.btVector3(0, -56, 0));
 var boxShape = new Ammo.btBoxShape(new Ammo.btVector3(1, 1, 1));
 
 function resetPositions() {
-        var side = Math.ceil(Math.pow(NUM, 1/3));
+        var side = Math.ceil(Math.pow(numBoxes, 1/3));
         var i = 1;
         for (var x = 0; x < side; x++) {
                 for (var y = 0; y < side; y++) {
@@ -59,11 +59,11 @@ function resetPositions() {
 }
 
 function startUp() {
-        NUMRANGE.forEach(function(i) {
+        for(var i = 0; i < numBoxes; i++){
                 var mass = 1;
                 var localInertia = new Ammo.btVector3(0, 0, 0);
                 boxShape.calculateLocalInertia(mass, localInertia);
-
+                
                 var startTransform = new Ammo.btTransform();
                 startTransform.setIdentity();
                 
@@ -72,8 +72,8 @@ function startUp() {
                 var body = new Ammo.btRigidBody(rbInfo);
                 
                 dynamicsWorld.addRigidBody(body);
-                bodies.push(body);
-        });
+                bodies.push(body);                
+        }
         
         resetPositions();
 }
@@ -103,7 +103,7 @@ function timeToRestart() { // restart if at least one is inactive - the scene is
                 }
                 return false;
         }
-        for (var i = 1; i <= NUM; i++) {
+        for (var i = 1; i <= numBoxes; i++) {
                 var body = bodies[i];
                 if (!body.isActive()) {
                         nextTimeToRestart = Date.now() + 1000; // add another second after first is inactive
@@ -134,7 +134,7 @@ function simulate(dt) {
         var data = { objects: [], currFPS: Math.round(1000/meanDt), allFPS: Math.round(1000/meanDt2) };
         
         // Read bullet data into JS objects
-        for (var i = 0; i < NUM; i++) {
+        for (var i = 0; i < numBoxes; i++) {
                 var object = [];
                 readBulletObject(i+1, object);
                 data.objects[i] = object;
@@ -148,9 +148,7 @@ function simulate(dt) {
 var interval = null;
 
 self.onmessage = function(event) {
-        NUM = event.data;
-        NUMRANGE.length = 0;
-        while (NUMRANGE.length < NUM) NUMRANGE.push(NUMRANGE.length+1);
+        numBoxes = event.data;
         
         frame = 1;
         meanDt = meanDt2 = 0;

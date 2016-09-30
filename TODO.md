@@ -7,3 +7,8 @@
   - Clean up the ammo_worker.js
 - see about using transferable object to see if it boost up
 - can you do a comparison between the performance in worker vs in main thread
+
+
+# Could that be a threex ?
+- like with workers 
+- converting geometry
