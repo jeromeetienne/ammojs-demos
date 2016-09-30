@@ -120,7 +120,7 @@
                 if (physicsWorker) physicsWorker.terminate();
                 physicsWorker = nextPhysicsWorker;
                 nextPhysicsWorker = null;
-                if (!physicsWorker) physicsWorker = new Worker('worker.js');
+                if (!physicsWorker) physicsWorker = new Worker('ammo_worker.js');
                 
                 physicsWorker.onmessage = function(event) {
                         var data = event.data;
@@ -189,4 +189,3 @@
         </center>
 </body>
 </html>
-

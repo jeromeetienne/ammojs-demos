@@ -1,0 +1,11 @@
+<title>Bullet/WebGL Demo</title>
+<body><script>
+        var physicsWorker = new Worker('ammo_worker.js');
+        
+        var NUM = 1
+        physicsWorker.addEventListener('message', function(event) {
+                console.log(event.data)
+                
+        });
+        physicsWorker.postMessage(NUM);
+</script></body>
