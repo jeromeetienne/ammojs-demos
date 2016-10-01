@@ -1,7 +1,7 @@
 var THREEx = THREEx || {}
 
 THREEx.AmmoWorld = function(){
-        this._controls = []
+        this._ammoControls = []
 
         this._clock = new THREE.Clock();
         
@@ -21,7 +21,22 @@ THREEx.AmmoWorld = function(){
 
 THREEx.AmmoWorld.prototype.update = function(){
         var deltaTime = this._clock.getDelta();
-        physicsWorld.stepSimulation( deltaTime, 10 );
+        this.physicsWorld.stepSimulation( deltaTime, 10 );
+        
+        for(var i = 0; i < this._ammoControls.length; i++){
+                var ammoControls = this._ammoControls[ i ];
+
+                var motionState = ammoControls.physicsBody.getMotionState();
+                console.assert( motionState )
+                var btTransform = new Ammo.btTransform();
+                motionState.getWorldTransform( btTransform );
+
+                var position = btTransform.getOrigin();
+                ammoControls.object3d.position.set( position.x(), position.y(), position.z() );
+
+                var quaternion = btTransform.getRotation();
+                ammoControls.object3d.quaternion.set( quaternion.x(), quaternion.y(), quaternion.z(), quaternion.w() );                        
+        }        
 }
 ////////////////////////////////////////////////////////////////////////////////
 //          Code Separator
@@ -30,9 +45,9 @@ THREEx.AmmoWorld.prototype.update = function(){
 THREEx.AmmoWorld.prototype.add = function(ammoControls){
         console.assert(ammoControls instanceof THREEx.AmmoControls)
 
-        this.physicsWorld.addRigidBody( ammoControls.body );
+        this.physicsWorld.addRigidBody( ammoControls.physicsBody );
         
-        this._controls.push(ammoControls)
+        this._ammoControls.push(ammoControls)
 }
 
 THREEx.AmmoWorld.prototype.remove = function(ammoControls){

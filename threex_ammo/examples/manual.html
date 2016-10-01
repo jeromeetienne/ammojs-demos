@@ -2,6 +2,8 @@
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <script src='../../vendor/three.js/build/three.min.js'></script>
 <script src='../../vendor/three.js/examples/js/controls/OrbitControls.js'></script>
+<script src="../../vendor/three.js/examples/js/libs/stats.min.js"></script>
+<script src="../../vendor/three.js/examples/js/libs/ammo.js"></script>
 <script src="../threex-ammoworld.js"></script>
 <script src="../threex-ammocontrols.js"></script>
 <div style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px;'>
@@ -24,7 +26,8 @@
 	// init scene and camera
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
-	camera.position.z = 2;
+	camera.position.y = 2;
+	camera.position.z = 10;
 	var controls	= new THREE.OrbitControls(camera)
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -67,23 +70,51 @@
 	})
 </script>
 <script>
-        var geometry = new THREE.BoxGeometry(1,1,1)
-        var material = new THREE.MeshNormalMaterial();
-        var mesh = new THREE.Mesh(geometry, material)
-        scene.add(mesh)
-        
-        var clock = new THREE.Clock();
-        onRenderFcts.push(function(){
-                var deltaTime = clock.getDelta();
-		mesh.rotateY(Math.PI * deltaTime)
-	})
-	
 	var ammoWorld = new THREEx.AmmoWorld()
 	onRenderFcts.push(function(){
 		ammoWorld.update()
 	})
-	
-	var ammoControls = new THREEx.AmmoControls(mesh)
-	ammoWorld.add(ammoControls)
+
+////////////////////////////////////////////////////////////////////////////////
+//          display ground
+////////////////////////////////////////////////////////////////////////////////
+
+;(function(){
+	var geometry = new THREE.BoxGeometry(20,0.1,20)
+        var material = new THREE.MeshBasicMaterial({
+		map: new THREE.TextureLoader().load("../../textures/grid.png", function onLoad(texture){
+			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+			texture.repeat.set(geometry.parameters.width,geometry.parameters.depth)
+			texture.anisotropy = renderer.getMaxAnisotropy()
+		})
+	});
+        var mesh = new THREE.Mesh(geometry, material)
+	mesh.position.y = -mesh.geometry.parameters.height/2
+        scene.add(mesh)
+        
+	var ammoControls = new THREEx.AmmoControls(mesh, {
+		mass: 0
+	})
+	ammoWorld.add(ammoControls)	
+})()
+
+;(function(){
+	var geometry = new THREE.SphereGeometry(0.5, 16, 10)
+	// var geometry = new THREE.BoxGeometry(1,1,1)
+	var material = new THREE.MeshNormalMaterial({
+		wireframe: true
+	});
+	for(var i = 0; i < 100; i++){
+	        var mesh = new THREE.Mesh(geometry, material)
+		mesh.position.y = 3+Math.random()*3
+		mesh.position.x = (Math.random()-0.5)*15
+		mesh.position.z = (Math.random()-0.5)*15
+	        scene.add(mesh)
+	        
+		var ammoControls = new THREEx.AmmoControls(mesh)
+		ammoWorld.add(ammoControls)	
+	}
+})()
+
 </script>
 </body>
