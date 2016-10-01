@@ -76,14 +76,16 @@ MyDemoApplication.prototype.initPhysics = function(){
 
   // Vehicle
   var wheelLoader = new THREE.BinaryLoader(true);
+console.log('object loading', new Date)
   wheelLoader.load({
-      model: "../../other/three/obj/veyron/parts/veyron_wheel_bin.js",
+      model: "other/three/obj/veyron/parts/veyron_wheel_bin.js",
       callback: function(wheelGeometry){
 	var bodyLoader = new THREE.BinaryLoader(true);
 	bodyLoader.load({
-	    model: "../../other/three/obj/veyron/parts/veyron_body_bin.js",
+	    model: "other/three/obj/veyron/parts/veyron_body_bin.js",
 	      callback: function(bodyGeometry){
-	      var r = "../../other/three/textures/cube/Bridge2/";
+console.log('object loading', new Date)
+	      var r = "other/three/textures/cube/Bridge2/";
 	      var urls = [ r + "posx.jpg", r + "negx.jpg",
 			   r + "posy.jpg", r + "negy.jpg",
 			   r + "posz.jpg", r + "negz.jpg" ];
@@ -197,7 +199,7 @@ MyDemoApplication.prototype.initPhysics = function(){
     var steeringClamp = 0.3;
     var wheelRadius = 0.4;
     var wheelWidth = 0.3;
-    var wheelFriction = 1000;//BT_LARGE_VAR;
+    var wheelFriction = 100;//BT_LARGE_VAR;
     var suspensionStiffness = 20.0;
     var suspensionDamping = 2.3;
     var suspensionCompression = 4.4;
