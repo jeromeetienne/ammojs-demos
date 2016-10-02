@@ -146,11 +146,10 @@
                         texture.repeat.set( terrainWidth - 1, terrainDepth - 1 );
                         groundMaterial.map = texture;
                         groundMaterial.needsUpdate = true;
-                        
                 });
                 
                 var light = new THREE.DirectionalLight( 0xffffff, 1 );
-                light.position.set( 100, 100, 50 );
+                light.position.set( -100, 100, 50 );
                 light.castShadow = true;
                 var dLight = 200;
                 var sLight = dLight * 0.25;
@@ -204,40 +203,61 @@
                 var groundMotionState = new Ammo.btDefaultMotionState( groundTransform );
                 var groundBody = new Ammo.btRigidBody( new Ammo.btRigidBodyConstructionInfo( groundMass, groundMotionState, groundShape, groundLocalInertia ) );
                 physicsWorld.addRigidBody( groundBody );
-                
         }
         
         function generateHeight( width, depth, minHeight, maxHeight ) {
-                
                 // Generates the height data (a sinus wave)
-                
                 var size = width * depth;
                 var data = new Float32Array(size);
                 
-                var hRange = maxHeight - minHeight;
-                var w2 = width / 2;
-                var d2 = depth / 2;
+                var heightRange = maxHeight - minHeight;
+                var halfWidth = width / 2;
+                var halfDepth = depth / 2;
                 var phaseMult = 12;
                 
-                var p = 0;
-                for ( var j = 0; j < depth; j++ ) {
-                        for ( var i = 0; i < width; i++ ) {
-                                
+                var index = 0;
+                for ( var z = 0; z < depth; z++ ) {
+                        for ( var x = 0; x < width; x++ ) {
                                 var radius = Math.sqrt(
-                                        Math.pow( ( i - w2 ) / w2, 2.0 ) +
-                                        Math.pow( ( j - d2 ) / d2, 2.0 ) );
-                                        
-                                        var height = ( Math.sin( radius * phaseMult ) + 1 ) * 0.5 * hRange + minHeight;
-                                        
-                                        data[ p ] = height;
-                                        
-                                        p++;
-                                }
+                                        Math.pow( ( x - halfWidth ) / halfWidth, 2.0 ) +
+                                        Math.pow( ( z - halfDepth ) / halfDepth, 2.0 )
+                                );
+                                
+                                var height = ( Math.sin( radius * phaseMult ) + 1 ) * 0.5 * heightRange + minHeight;
+                                data[ index ] = height;
+                                index++;
                         }
-                        
-                        return data;
-                        
                 }
+                return data;                
+        }
+        
+        function generateHeight( width, depth, minHeight, maxHeight ) {
+                // Generates the height data (a sinus wave)
+                var size = width * depth;
+                var data = new Float32Array(size);
+                
+                var heightRange = maxHeight - minHeight;
+                var halfWidth = width / 2;
+                var halfDepth = depth / 2;
+                
+                var borderRadius = 32
+                
+                var index = 0;
+                for( var z = 0; z < depth; z++ ){
+                        for( var x = 0; x < width; x++ ){
+                                
+                                if( x-halfWidth > halfWidth-borderRadius ){
+                                        var height = maxHeight
+                                }else{                                        
+                                        var height = minHeight;
+                                }
+                                
+                                data[ index ] = height;
+                                index++;
+                        }
+                }
+                return data;                
+        }
                 
                 function createTerrainShape() {
                         
