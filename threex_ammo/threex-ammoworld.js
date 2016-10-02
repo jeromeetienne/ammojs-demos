@@ -21,14 +21,16 @@ THREEx.AmmoWorld = function(){
 
 THREEx.AmmoWorld.prototype.update = function(){
         var deltaTime = this._clock.getDelta();
+        // compute physics
         this.physicsWorld.stepSimulation( deltaTime, 10 );
         
+        // update all ammoControls
+        var btTransform = new Ammo.btTransform();
         for(var i = 0; i < this._ammoControls.length; i++){
                 var ammoControls = this._ammoControls[ i ];
 
                 var motionState = ammoControls.physicsBody.getMotionState();
                 console.assert( motionState )
-                var btTransform = new Ammo.btTransform();
                 motionState.getWorldTransform( btTransform );
 
                 var position = btTransform.getOrigin();
@@ -38,6 +40,8 @@ THREEx.AmmoWorld.prototype.update = function(){
                 ammoControls.object3d.quaternion.set( quaternion.x(), quaternion.y(), quaternion.z(), quaternion.w() );                        
         }        
 }
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //          Code Separator
 ////////////////////////////////////////////////////////////////////////////////

@@ -116,4 +116,76 @@
 	}
 })()
 </script>
+<script>
+;(function(){
+	var clickRequest = false;
+	var mouseCoords = new THREE.Vector2();
+	var raycaster = new THREE.Raycaster();
+	var ballMaterial = new THREE.MeshPhongMaterial( { color: 0x202020 } );
+	var pos = new THREE.Vector3();
+	var quat = new THREE.Quaternion();
+	var margin = 0.5
+
+	initInput();
+	onRenderFcts.push(function(){
+		processClick();
+	})
+
+	function initInput() {
+		window.addEventListener( 'mousedown', function( event ) {
+			if ( clickRequest === true ) return
+			clickRequest = true;
+			mouseCoords.set(
+				( event.clientX / window.innerWidth ) * 2 - 1,
+				- ( event.clientY / window.innerHeight ) * 2 + 1
+			);
+		}, false );
+
+	}
+
+	function processClick() {
+
+		if ( clickRequest === false ) return
+		clickRequest = false;
+
+		raycaster.setFromCamera( mouseCoords, camera );
+
+		// Creates a ball
+		var ballMass = 3;
+		var ballRadius = 0.4;
+
+		// var ball = new THREE.Mesh( new THREE.SphereGeometry( ballRadius, 18, 16 ), ballMaterial );
+		// ball.castShadow = true;
+		// ball.receiveShadow = true;
+		// var ballShape = new Ammo.btSphereShape( ballRadius );
+		// ballShape.setMargin( margin );
+		// pos.copy( raycaster.ray.direction );
+		// pos.add( raycaster.ray.origin );
+		// quat.set( 0, 0, 0, 1 );
+		
+		// create mesh
+		var geometry = new THREE.SphereGeometry(0.5, 16, 10)
+		var material = new THREE.MeshNormalMaterial({
+			wireframe: true
+		});
+		var mesh = new THREE.Mesh(geometry, material)
+		mesh.position.copy(pos)
+		mesh.quaternion.copy(quat)
+	        scene.add(mesh)
+	        
+		var ammoControls = new THREEx.AmmoControls(mesh)
+		ammoWorld.add(ammoControls)	
+
+		var ballBody = ammoControls.physicsBody
+		ballBody.setFriction( 0.5 );
+
+		pos.copy( raycaster.ray.direction );
+		pos.multiplyScalar( 14*2 );
+		ballBody.setLinearVelocity( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+
+	}
+	
+})()
+
+</script>
 </body>

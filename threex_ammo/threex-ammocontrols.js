@@ -14,20 +14,30 @@ THREEx.AmmoControls = function(object3d, options){
         var mass = options.mass !== undefined ? options.mass : null;
         
         if( object3d.geometry instanceof THREE.BoxGeometry ){
-                if( mass === null )     mass = 5        // TODO compute from box size
+                if( mass === null ){
+                        mass = object3d.geometry.parameters.width 
+                                * object3d.geometry.parameters.height 
+                                * object3d.geometry.parameters.depth                        
+                }
                 var btVector3 = new Ammo.btVector3()
                 btVector3.setX(object3d.geometry.parameters.width/2)
                 btVector3.setY(object3d.geometry.parameters.height/2)
                 btVector3.setZ(object3d.geometry.parameters.depth/2)
                 var shape = new Ammo.btBoxShape( btVector3 );
         }else if( object3d.geometry instanceof THREE.SphereGeometry ){
-                if( mass === null )     mass = 5        // TODO compute from sphere size
+                if( mass === null ){
+                        mass = 4/3 *Math.PI * Math.pow(object3d.geometry.parameters.radius,3)                        
+                }
                 var radius = object3d.geometry.parameters.radius        
                 var shape = new Ammo.btSphereShape( radius );                
         }else{
                 // console.assert('unknown geometry type', object3d.geometry)
                 var box3 = new THREE.Box3().setFromObject(this.object3d)
                 var size = box3.getSize()
+                if( mass === null ){
+                        mass = size.x * size.y * size.z                        
+                }
+
                 if( mass === null )     mass = 5        // TODO compute from box size
                 var btVector3 = new Ammo.btVector3()
                 btVector3.setX(size.x/2)
