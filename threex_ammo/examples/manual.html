@@ -101,10 +101,13 @@
 ;(function(){
 	var geometry = new THREE.SphereGeometry(0.5, 16, 10)
 	// var geometry = new THREE.BoxGeometry(1,1,1)
+	var geometry = new THREE.CylinderGeometry(0.5,0.5, 1)
+	// debugger;
+	console.log(geometry)
 	var material = new THREE.MeshNormalMaterial({
 		wireframe: true
 	});
-	for(var i = 0; i < 100; i++){
+	for(var i = 0; i < 1; i++){
 	        var mesh = new THREE.Mesh(geometry, material)
 		mesh.position.y = 3+Math.random()*3
 		mesh.position.x = (Math.random()-0.5)*15
@@ -117,6 +120,10 @@
 })()
 </script>
 <script>
+////////////////////////////////////////////////////////////////////////////////
+//          throw a ball in front of the camera 
+////////////////////////////////////////////////////////////////////////////////
+
 ;(function(){
 	var clickRequest = false;
 	var mouseCoords = new THREE.Vector2();

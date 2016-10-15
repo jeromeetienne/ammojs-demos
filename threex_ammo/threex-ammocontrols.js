@@ -30,6 +30,14 @@ THREEx.AmmoControls = function(object3d, options){
                 }
                 var radius = object3d.geometry.parameters.radius        
                 var shape = new Ammo.btSphereShape( radius );                
+        }else if( object3d.geometry instanceof THREE.CylinderGeometry ){
+                if( mass === null ){
+                        mass = 2        // TODO get formula fron the internet                        
+                }
+                // debugger
+                var p = object3d.geometry.parameters
+                var size = new Ammo.btVector3( p.radiusTop, p.height * 0.5, p.radiusBottom)
+                var shape = new Ammo.btCylinderShape( size );
         }else{
                 // console.assert('unknown geometry type', object3d.geometry)
                 var box3 = new THREE.Box3().setFromObject(this.object3d)
