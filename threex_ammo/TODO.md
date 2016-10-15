@@ -14,9 +14,11 @@
   - make domino and make it interactive
     - make it such as you can give the path from a string - how to join the letter
     - or simply make a bspline
+    - make a hardcoded three.js line of domino
 - throwing some dice, pool, bowling
 - compute the terrain
-  - displau it
+  - do a cube geometry at first
+  - display it
   - make a physic conversion of it
 - port the vehicule into your demo
   - threex.ammovehicule.js
