@@ -56,6 +56,5 @@ THREEx.AmmoWorld.prototype.add = function(ammoControls){
 
 THREEx.AmmoWorld.prototype.remove = function(ammoControls){
         console.assert(ammoControls instanceof THREEx.AmmoControls)        
-        
-        console.assert(false, 'not yet implemented')
+        ammoWorld.physicsWorld.removeRigidBody( ammoControls.physicsWorld )
 }
