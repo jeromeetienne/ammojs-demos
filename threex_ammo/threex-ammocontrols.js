@@ -73,3 +73,9 @@ THREEx.AmmoControls = function(object3d, options){
         
         this.physicsBody = body
 }
+
+THREEx.AmmoControls.prototype.setLinearVelocity = function(x,y,z){
+        this.physicsBody.setLinearVelocity( new Ammo.btVector3( x, y, z ) );
+        this.physicsBody.activate()
+        // this.physicsBody.setActivationState(th.DISABLE_DEACTIVATION);
+}
