@@ -14,6 +14,7 @@
   - make domino and make it interactive
     - make it such as you can give the path from a string - how to join the letter
     - or simply make a bspline
+- pool, bowling
 - compute the terrain
   - displau it
   - make a physic conversion of it
