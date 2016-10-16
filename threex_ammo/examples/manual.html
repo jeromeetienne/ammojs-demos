@@ -167,7 +167,7 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-return
+// return
 	var geometry = new THREE.SphereGeometry(0.5, 16, 10)
 	// var geometry = new THREE.BoxGeometry(1,1,1)
 	// var geometry = new THREE.CylinderGeometry(0.5,0.5, 1)
@@ -176,7 +176,7 @@ return
 	var material = new THREE.MeshNormalMaterial({
 		wireframe: true
 	});
-	for(var i = 0; i < 100; i++){
+	for(var i = 0; i < 1; i++){
 	        var mesh = new THREE.Mesh(geometry, material)
 		mesh.position.y = 3+Math.random()*3
 		mesh.position.x = (Math.random()-0.5)*15
@@ -304,6 +304,36 @@ return
 		ballBody.setLinearVelocity( new Ammo.btVector3( position.x, position.y, position.z ) );
 	})
 })()
+
+////////////////////////////////////////////////////////////////////////////////
+//          Code Separator
+////////////////////////////////////////////////////////////////////////////////
+
+// http://stackoverflow.com/questions/31991267/bullet-physicsammo-js-in-asm-js-how-to-get-collision-impact-force
+
+function playingWithCollision(){
+	var dispatcher = ammoWorld.physicsWorld.getDispatcher()
+	var nManifolds = dispatcher.getNumManifolds()
+	
+	for (var i = 0; i < nManifolds; i++) {
+	    var manifold = dispatcher.getManifoldByIndexInternal(i);
+
+	    var nContact = manifold.getNumContacts();
+	    if (nContact === 0) continue
+
+
+	    for (var j = 0; j < nContact; j++) {
+	        var contactPoint = manifold.getContactPoint(j);
+
+	        console.log('body 1: ', manifold.getBody0());
+	        console.log('body 2: ', manifold.getBody1());
+
+	        console.log('COLLISION DETECTED!');
+	        // HERE: how to get impact force details?
+	        console.log( contactPoint.getAppliedImpulse() )
+	    }
+	}
+}
 
 </script>
 </body>

@@ -49,14 +49,17 @@ THREEx.AmmoControls = function(object3d, options){
 ////////////////////////////////////////////////////////////////////////////////
 
 THREEx.AmmoControls.guessMassFromObject3d = function(object3d){
+        var p = object3d.geometry.parameters
+        var mass
         if( object3d.geometry instanceof THREE.BoxGeometry ){
-                mass = object3d.geometry.parameters.width 
-                                * object3d.geometry.parameters.height 
-                                * object3d.geometry.parameters.depth                        
+                mass = p.width 
+                                * p.height 
+                                * p.depth                        
         }else if( object3d.geometry instanceof THREE.SphereGeometry ){
-                mass = 4/3 *Math.PI * Math.pow(object3d.geometry.parameters.radius,3)                        
+                mass = 4/3 *Math.PI * Math.pow(p.radius,3)                        
         }else if( object3d.geometry instanceof THREE.CylinderGeometry ){
-                mass = 2        // TODO get formula fron the internet                        
+                // from http://jwilson.coe.uga.edu/emt725/Frustum/Frustum.cone.html
+                mass = Math.PI*p.height/3 * (p.radiusBottom*p.radiusBottom + p.radiusBottom*p.radiusTop + p.radiusTop*p.radiusTop)
         }else{
                 // console.assert('unknown geometry type', object3d.geometry)
                 var box3 = new THREE.Box3().setFromObject(this.object3d)
