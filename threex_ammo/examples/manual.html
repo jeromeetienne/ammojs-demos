@@ -15,8 +15,10 @@
 	//////////////////////////////////////////////////////////////////////////////////
 
 	// init renderer
-	var renderer	= new THREE.WebGLRenderer();
-	renderer.setClearColor(new THREE.Color('lightgrey'), 1)
+	var renderer	= new THREE.WebGLRenderer({
+		antialias: true
+	});
+	renderer.setClearColor(new THREE.Color('black'), 1)
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
 
@@ -69,6 +71,27 @@
 	})
 </script>
 <script>
+//////////////////////////////////////////////////////////////////////////////////
+//		set 3 point lighting						//
+//////////////////////////////////////////////////////////////////////////////////
+
+;(function(){
+	// add a ambient light
+	var light	= new THREE.AmbientLight( 0x020202 ) 
+	scene.add( light )
+	// add a light in front
+	var light	= new THREE.DirectionalLight('white', 1)
+	light.position.set(0.5, 0.5, 2)
+	scene.add( light ) 
+	// add a light behind
+	var light	= new THREE.DirectionalLight('white', 0.75)
+	light.position.set(-0.5, -0.5, -2)
+	scene.add( light )		
+})()
+////////////////////////////////////////////////////////////////////////////////
+//          Code Separator
+////////////////////////////////////////////////////////////////////////////////
+
 	var ammoWorld = new THREEx.AmmoWorld()
 	onRenderFcts.push(function(){
 		ammoWorld.update()
@@ -101,7 +124,7 @@
 })()
 
 ////////////////////////////////////////////////////////////////////////////////
-//          a flat ground
+//          an inside box
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
@@ -176,7 +199,15 @@ return
 	var material = new THREE.MeshNormalMaterial({
 		wireframe: true
 	});
-	for(var i = 0; i < 1; i++){
+
+	var textureColor= THREE.ImageUtils.loadTexture('images/NewTennisBallColor.jpg')
+	var textureBump	= THREE.ImageUtils.loadTexture('images/TennisBallBump.jpg')
+	var material	= new THREE.MeshPhongMaterial({
+		map	: textureColor,
+		bumpMap	: textureBump,
+		bumpScale: 0.01,
+	})
+	for(var i = 0; i < 100; i++){
 	        var mesh = new THREE.Mesh(geometry, material)
 		mesh.position.y = 3+Math.random()*3
 		mesh.position.x = (Math.random()-0.5)*15
@@ -310,30 +341,33 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 // http://stackoverflow.com/questions/31991267/bullet-physicsammo-js-in-asm-js-how-to-get-collision-impact-force
-
-function playingWithCollision(){
-	var dispatcher = ammoWorld.physicsWorld.getDispatcher()
-	var nManifolds = dispatcher.getNumManifolds()
-	
-	for (var i = 0; i < nManifolds; i++) {
-	    var manifold = dispatcher.getManifoldByIndexInternal(i);
-
-	    var nContact = manifold.getNumContacts();
-	    if (nContact === 0) continue
-
-
-	    for (var j = 0; j < nContact; j++) {
-	        var contactPoint = manifold.getContactPoint(j);
-
-	        console.log('body 1: ', manifold.getBody0());
-	        console.log('body 2: ', manifold.getBody1());
-
-	        console.log('COLLISION DETECTED!');
-	        // HERE: how to get impact force details?
-	        console.log( contactPoint.getAppliedImpulse() )
-	    }
-	}
-}
+// 
+// function playingWithCollision(){
+// 	var dispatcher = ammoWorld.physicsWorld.getDispatcher()
+// 	var nManifolds = dispatcher.getNumManifolds()
+// console.log('nManifolds', nManifolds)	
+// 	for(var i = 0; i < nManifolds; i++){
+// 	    var manifold = dispatcher.getManifoldByIndexInternal(i);
+// 
+// 	    var nContact = manifold.getNumContacts();
+// 	    if (nContact === 0) continue
+// 
+// 	    for(var j = 0; j < nContact; j++){
+// 	        var contactPoint = manifold.getContactPoint(j);
+// 	        console.log('body 1: ', manifold.getBody0());
+// 	        console.log('body 2: ', manifold.getBody1());
+// window.body0= manifold.getBody0()
+// window.body1= manifold.getBody1()
+// 	        console.log('COLLISION DETECTED!');
+// 	        // HERE: how to get impact force details?
+// 	        console.log( 'applied impulse', contactPoint.getAppliedImpulse() )
+// 	    }
+// 	}
+// }
+// 
+// onRenderFcts.push(function(){
+// 	playingWithCollision()
+// })
 
 </script>
 </body>
