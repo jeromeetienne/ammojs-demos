@@ -6,6 +6,9 @@
 <script src="../../vendor/three.js/examples/js/libs/ammo.js"></script>
 <script src="../threex-ammoworld.js"></script>
 <script src="../threex-ammocontrols.js"></script>
+<script src="../../vendor/threex.crates/threex.crates.js"></script>
+<script>THREEx.Crates.baseURL='../../vendor/threex.crates/'</script>
+
 <div style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px;'>
 	Boilerplate for <a href="http://threejs.org" target="_blank">three.js</a>
 	- works on desktop and mobile
@@ -92,10 +95,10 @@
 //          Code Separator
 ////////////////////////////////////////////////////////////////////////////////
 
-	var ammoWorld = new THREEx.AmmoWorld()
-	onRenderFcts.push(function(){
-		ammoWorld.update()
-	})
+var ammoWorld = new THREEx.AmmoWorld()
+onRenderFcts.push(function(){
+	ammoWorld.update()
+})
 
 ////////////////////////////////////////////////////////////////////////////////
 //          display ground
