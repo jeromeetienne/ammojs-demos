@@ -23,3 +23,7 @@
 - port the vehicule into your demo
   - threex.ammovehicule.js
 - make physics easy to tune with dat.gui
+
+# Plan to import vehicule
+- take the three.js demo
+- port it bit by bit
