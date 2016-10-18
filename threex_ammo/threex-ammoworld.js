@@ -23,7 +23,7 @@ THREEx.AmmoWorld.prototype.update = function(){
         var deltaTime = this._clock.getDelta();
         // compute physics
         this.physicsWorld.stepSimulation( deltaTime, 10 );
-        
+
         // update all ammoControls
         var btTransform = new Ammo.btTransform();
         for(var i = 0; i < this._ammoControls.length; i++){
