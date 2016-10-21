@@ -6,8 +6,12 @@
 <script src="../../vendor/three.js/examples/js/libs/ammo.js"></script>
 <script src="../threex-ammoworld.js"></script>
 <script src="../threex-ammocontrols.js"></script>
+
 <script src="../../vendor/threex.crates/threex.crates.js"></script>
 <script>THREEx.Crates.baseURL='../../vendor/threex.crates/'</script>
+
+<script src="../../vendor/threex.sportballs/threex.sportballs.js"></script>
+<script>THREEx.SportBalls.baseURL='../../vendor/threex.sportballs/'</script>
 
 <div style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px;'>
 	Boilerplate for <a href="http://threejs.org" target="_blank">three.js</a>
@@ -193,7 +197,7 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-// return
+return
 	var geometry = new THREE.SphereGeometry(0.5, 16, 10)
 	// var geometry = new THREE.BoxGeometry(1,1,1)
 	// var geometry = new THREE.CylinderGeometry(0.5,0.5, 1)
@@ -226,13 +230,15 @@ return
 //          Pile of crate
 ////////////////////////////////////////////////////////////////////////////////
 ;(function(){
-return
+// return
 	var geometry = new THREE.BoxGeometry(1,1,1)
 	var material = new THREE.MeshNormalMaterial({
 		wireframe: true
 	});
+	var model = new THREE.Mesh(geometry, material)
+	var model = THREEx.Crates.createCrate0()
 	
-	var nCubes = new THREE.Vector3(5,5,1)
+	var nCubes = new THREE.Vector3(5,5,3)
 
 	var size = new THREE.Vector3(geometry.parameters.width*1.1
 			, geometry.parameters.height*1.1
@@ -241,12 +247,12 @@ return
 	for(var x = 0; x < nCubes.x; x++){
 		for(var y = 0; y < nCubes.y; y++){
 			for(var z = 0; z < nCubes.z; z++){
-				var mesh = new THREE.Mesh(geometry, material)
-				mesh.position.x = (x-nCubes.x/2+0.5) * size.x
-				mesh.position.y = (y-nCubes.y/2+0.5) * size.y
-				mesh.position.z = (z-nCubes.z/2+0.5) * size.z
+				var mesh = model.clone()
+				mesh.position.x = (x-nCubes.x/2+0.5) * mesh.scale.x * size.x
+				mesh.position.y = (y-nCubes.y/2+0.5) * mesh.scale.y * size.y
+				mesh.position.z = (z-nCubes.z/2+0.5) * mesh.scale.z * size.z
 
-				mesh.position.y += 3 + nCubes.y/2 * size.y
+				mesh.position.y += 3 + nCubes.y/2 * size.y * mesh.scale.y
 			        scene.add(mesh)
 			        
 				var ammoControls = new THREEx.AmmoControls(mesh)
@@ -293,6 +299,15 @@ return
 ;(function(){
 	var clickRequest = false;
 	var mouseCoords = new THREE.Vector2();
+	
+	// var geometry = new THREE.SphereGeometry(1, 16, 10)
+	// var material = new THREE.MeshNormalMaterial({
+	// 	wireframe: true
+	// });
+	// var model = new THREE.Mesh(geometry, material)
+	var model = THREEx.SportBalls.createBasket()
+	// var model = THREEx.SportBalls.createSoftball()
+	model.scale.multiplyScalar(2)
 
 	window.addEventListener( 'mousedown', function( event ) {
 		if ( clickRequest === true ) return
@@ -317,11 +332,7 @@ return
 		quaternion.set( 0, 0, 0, 1 );
 		
 		// create mesh
-		var geometry = new THREE.SphereGeometry(1, 16, 10)
-		var material = new THREE.MeshNormalMaterial({
-			wireframe: true
-		});
-		var mesh = new THREE.Mesh(geometry, material)
+		var mesh = model.clone()
 		mesh.position.copy(position)
 		mesh.quaternion.copy(quaternion)
 	        scene.add(mesh)
@@ -334,7 +345,7 @@ return
 		ballBody.setRestitution(0.9)
 
 		position.copy( raycaster.ray.direction );
-		position.multiplyScalar( 14*2 );
+		position.multiplyScalar( 14*3 );
 		ballBody.setLinearVelocity( new Ammo.btVector3( position.x, position.y, position.z ) );
 	})
 })()

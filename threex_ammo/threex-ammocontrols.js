@@ -19,14 +19,12 @@ THREEx.AmmoControls = function(object3d, options){
         }else{
                 var mass = THREEx.AmmoControls.guessMassFromObject3d(object3d)
         }
-
-
         
         var margin = 0.05;
         shape.setMargin( margin );
 
         if( mass !== 0){
-                var localInertia = new Ammo.btVector3( 0, 0, 0 );
+                var localInertia = new Ammo.btVector3( 0, 10, 0 );
                 shape.calculateLocalInertia( mass, localInertia );                
         }
 
