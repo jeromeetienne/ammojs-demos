@@ -27,6 +27,8 @@
 	});
 	renderer.setClearColor(new THREE.Color('black'), 1)
 	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.BasicShadowMap;
 	document.body.appendChild( renderer.domElement );
 
 	// array of functions for the rendering loop
@@ -83,17 +85,36 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-	// add a ambient light
-	var light	= new THREE.AmbientLight( 0x020202 ) 
-	scene.add( light )
-	// add a light in front
-	var light	= new THREE.DirectionalLight('white', 1)
-	light.position.set(0.5, 0.5, 2)
-	scene.add( light ) 
-	// add a light behind
-	var light	= new THREE.DirectionalLight('white', 0.75)
-	light.position.set(-0.5, -0.5, -2)
-	scene.add( light )		
+	// // add a ambient light
+	// var light	= new THREE.AmbientLight( 0x020202 ) 
+	// scene.add( light )
+	// // add a light in front
+	// var light	= new THREE.DirectionalLight('white', 1)
+	// light.position.set(0.5, 0.5, 2)
+	// scene.add( light ) 
+	// // add a light behind
+	// var light	= new THREE.DirectionalLight('white', 0.75)
+	// light.position.set(-0.5, -0.5, -2)
+	// scene.add( light )		
+})()
+
+
+;(function(){
+	var dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+	dirLight.name = 'Dir. Light';
+	dirLight.position.set( 15, 15, 15 );
+	dirLight.castShadow = true;
+	dirLight.shadow.camera.near = 1;
+	dirLight.shadow.camera.far = 50;
+	dirLight.shadow.camera.right = 25;
+	dirLight.shadow.camera.left = - 25;
+	dirLight.shadow.camera.top	= 25;
+	dirLight.shadow.camera.bottom = - 25;
+	dirLight.shadow.mapSize.width = 1024;
+	dirLight.shadow.mapSize.height = 1024;
+	scene.add( dirLight );
+
+	// scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );	
 })()
 ////////////////////////////////////////////////////////////////////////////////
 //          Code Separator
@@ -111,7 +132,7 @@ onRenderFcts.push(function(){
 ;(function(){
 // return
 	var geometry = new THREE.BoxGeometry(40,0.1,40)
-        var material = new THREE.MeshBasicMaterial({
+        var material = new THREE.MeshPhongMaterial({
 		map: new THREE.TextureLoader().load("../../textures/grid.png", function onLoad(texture){
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			texture.repeat.set(geometry.parameters.width,geometry.parameters.depth)
@@ -120,6 +141,7 @@ onRenderFcts.push(function(){
 	});
         var mesh = new THREE.Mesh(geometry, material)
 	mesh.position.y = -mesh.geometry.parameters.height/2 - 3
+	mesh.receiveShadow = true
         scene.add(mesh)
 	
 
@@ -197,16 +219,11 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-return
+// return
 	var geometry = new THREE.SphereGeometry(0.5, 16, 10)
-	// var geometry = new THREE.BoxGeometry(1,1,1)
-	// var geometry = new THREE.CylinderGeometry(0.5,0.5, 1)
-	// debugger;
-	console.log(geometry)
 	var material = new THREE.MeshNormalMaterial({
 		wireframe: true
 	});
-
 	var textureColor= THREE.ImageUtils.loadTexture('images/NewTennisBallColor.jpg')
 	var textureBump	= THREE.ImageUtils.loadTexture('images/TennisBallBump.jpg')
 	var material	= new THREE.MeshPhongMaterial({
@@ -214,8 +231,13 @@ return
 		bumpMap	: textureBump,
 		bumpScale: 0.01,
 	})
+	var model = new THREE.Mesh(geometry, material)
+	model.castShadow = true
+	model.receiveShadow = true
+	
+	
 	for(var i = 0; i < 100; i++){
-	        var mesh = new THREE.Mesh(geometry, material)
+	        var mesh = model.clone()
 		mesh.position.y = 3+Math.random()*3
 		mesh.position.x = (Math.random()-0.5)*15
 		mesh.position.z = (Math.random()-0.5)*15
@@ -237,7 +259,9 @@ return
 	});
 	var model = new THREE.Mesh(geometry, material)
 	var model = THREEx.Crates.createCrate0()
-	
+	model.castShadow = true
+	model.receiveShadow = true
+
 	var nCubes = new THREE.Vector3(5,5,3)
 
 	var size = new THREE.Vector3(geometry.parameters.width*1.1
@@ -308,6 +332,8 @@ return
 	var model = THREEx.SportBalls.createBasket()
 	// var model = THREEx.SportBalls.createSoftball()
 	model.scale.multiplyScalar(2)
+	model.castShadow = true
+	model.receiveShadow = true
 
 	window.addEventListener( 'mousedown', function( event ) {
 		if ( clickRequest === true ) return
