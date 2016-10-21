@@ -50,47 +50,54 @@ THREEx.AmmoControls = function(object3d, options){
 
 THREEx.AmmoControls.guessMassFromObject3d = function(object3d){
         var p = object3d.geometry.parameters
+        var s = object3d.scale
         var mass
         if( object3d.geometry instanceof THREE.BoxGeometry ){
-                mass = p.width 
-                                * p.height 
-                                * p.depth                        
+                mass = p.width * s.x
+                                * p.height * s.y
+                                * p.depth * s.z                 
         }else if( object3d.geometry instanceof THREE.SphereGeometry ){
-                mass = 4/3 *Math.PI * Math.pow(p.radius,3)                        
+                mass = 4/3 *Math.PI * Math.pow(p.radius * s.x ,3)                        
         }else if( object3d.geometry instanceof THREE.CylinderGeometry ){
                 // from http://jwilson.coe.uga.edu/emt725/Frustum/Frustum.cone.html
-                mass = Math.PI*p.height/3 * (p.radiusBottom*p.radiusBottom + p.radiusBottom*p.radiusTop + p.radiusTop*p.radiusTop)
+                mass = Math.PI*p.height/3 * (p.radiusBottom*p.radiusBottom * s.x*s.x
+                        + p.radiusBottom*p.radiusTop * s.y*s.y
+                        + p.radiusTop*p.radiusTop * s.x*s.x)
         }else{
                 // console.assert('unknown geometry type', object3d.geometry)
                 var box3 = new THREE.Box3().setFromObject(this.object3d)
                 var size = box3.getSize()
-                mass = size.x * size.y * size.z                        
+                mass = size.x*s.x * size.y*s.y * size.z*s.z
         }        
         return mass
 }
 
 THREEx.AmmoControls.guessShapeFromObject3d = function(object3d){
+        var p = object3d.geometry.parameters
+        var s = object3d.scale
+
         if( object3d.geometry instanceof THREE.BoxGeometry ){
                 var btVector3 = new Ammo.btVector3()
-                btVector3.setX(object3d.geometry.parameters.width/2)
-                btVector3.setY(object3d.geometry.parameters.height/2)
-                btVector3.setZ(object3d.geometry.parameters.depth/2)
+                btVector3.setX(p.width /2 * s.x)
+                btVector3.setY(p.height/2 * s.y)
+                btVector3.setZ(p.depth /2 * s.z)
                 var shape = new Ammo.btBoxShape( btVector3 );
         }else if( object3d.geometry instanceof THREE.SphereGeometry ){
-                var radius = object3d.geometry.parameters.radius        
+                var radius = p.radius * s.x
                 var shape = new Ammo.btSphereShape( radius );                
         }else if( object3d.geometry instanceof THREE.CylinderGeometry ){
-                var p = object3d.geometry.parameters
-                var size = new Ammo.btVector3( p.radiusTop, p.height * 0.5, p.radiusBottom)
+                var size = new Ammo.btVector3( p.radiusTop* s.x,
+                                p.height * 0.5 * s.y,
+                                p.radiusBottom * s.x)
                 var shape = new Ammo.btCylinderShape( size );
         }else{
                 // console.assert('unknown geometry type', object3d.geometry)
                 var box3 = new THREE.Box3().setFromObject(this.object3d)
                 var size = box3.getSize()
                 var btVector3 = new Ammo.btVector3()
-                btVector3.setX(size.x/2)
-                btVector3.setY(size.y/2)
-                btVector3.setZ(size.z/2)
+                btVector3.setX(size.x/2 * s.x)
+                btVector3.setY(size.y/2 * s.y)
+                btVector3.setZ(size.z/2 * s.z)
                 var shape = new Ammo.btBoxShape( btVector3 );
         }
         return shape
