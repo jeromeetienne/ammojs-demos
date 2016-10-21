@@ -13,7 +13,7 @@
 <script src="../../vendor/threex.sportballs/threex.sportballs.js"></script>
 <script>THREEx.SportBalls.baseURL='../../vendor/threex.sportballs/'</script>
 
-<div style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px;'>
+<div style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px; color: white;'>
 	Boilerplate for <a href="http://threejs.org" target="_blank">three.js</a>
 	- works on desktop and mobile
 </div><body style='margin: 0px; overflow: hidden; text-align:center;'><script>
@@ -28,7 +28,7 @@
 	renderer.setClearColor(new THREE.Color('black'), 1)
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.shadowMap.enabled = true;
-	renderer.shadowMap.type = THREE.BasicShadowMap;
+	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 	document.body.appendChild( renderer.domElement );
 
 	// array of functions for the rendering loop
