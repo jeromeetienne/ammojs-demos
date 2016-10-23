@@ -8,9 +8,12 @@
   - ammoWorld.update()
 - THREEx.AmmoControls(object3d)
 
+# Possible demo
+- pool ball
+
 # Possible task
 - make a demo
-  - throw a ball into a cube of crates
+  - throw a ball into a cube of crates with trump
   - make domino and make it interactive
     - make it such as you can give the path from a string - how to join the letter
     - or simply make a bspline
@@ -23,6 +26,7 @@
 - port the vehicule into your demo
   - threex.ammovehicule.js
 - make physics easy to tune with dat.gui
+- make vr support
 
 # Plan to import vehicule
 - take the three.js demo
