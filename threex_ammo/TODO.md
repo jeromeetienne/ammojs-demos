@@ -8,8 +8,15 @@
   - ammoWorld.update()
 - THREEx.AmmoControls(object3d)
 
+# 
+
 # Possible demo
 - pool ball
+- domino
+- image destruction
+- castle of cards
+- throwing dice
+  - good looks and angle https://youtu.be/Uo3kZDVG6dA?t=11
 
 # Possible task
 - make a demo

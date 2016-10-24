@@ -7,14 +7,10 @@
 <script src="../threex-ammoworld.js"></script>
 <script src="../threex-ammocontrols.js"></script>
 
-<script src="../../vendor/threex.crates/threex.crates.js"></script>
-<script>THREEx.Crates.baseURL='../../vendor/threex.crates/'</script>
-
 <script src="../../vendor/threex.sportballs/threex.sportballs.js"></script>
 <script>THREEx.SportBalls.baseURL='../../vendor/threex.sportballs/'</script>
 
-<script src='../../vendor/threex.poolball/threex.poolball.js'></script>
-<script src='js/startup.js'></script>
+<script src='js/startupTHREEjs.js'></script>
 
 <div style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px; color: white;'>
 	Playing with <a href="http://threejs.org" target="_blank">three.js</a>
@@ -23,11 +19,12 @@
 	<br> Click to throw balls!
 </div><body style='margin: 0px; overflow: hidden; text-align:center;'><script>
 
-startUpp(function(renderer, scene, camera, onRenderFcts){
+startUpTHREEjs(function(renderer, scene, camera, controls, onRenderFcts){
 
-camera.position.y = 3;
+camera.position.y = 10;
 camera.position.z = 20;
-camera.lookAt(new THREE.Vector3(0,0,0))
+camera.lookAt(new THREE.Vector3(0,3,0))
+controls.enabled = false
 
 //////////////////////////////////////////////////////////////////////////////////
 //		set 3 point lighting						//
@@ -89,7 +86,7 @@ onRenderFcts.push(function(){
 		})
 	});
         var mesh = new THREE.Mesh(geometry, material)
-	mesh.position.y = -mesh.geometry.parameters.height/2 - 3
+	mesh.position.y = -mesh.geometry.parameters.height/2
 	mesh.receiveShadow = true
         scene.add(mesh)
 	
@@ -123,8 +120,8 @@ onRenderFcts.push(function(){
 	var texture = THREE.ImageUtils.loadTexture(url)
 	model.material.map = texture
 
-	var size = new THREE.Vector3(geometry.parameters.width*1.05
-			, geometry.parameters.height*1.05
+	var size = new THREE.Vector3(geometry.parameters.width*1
+			, geometry.parameters.height*1
 			, geometry.parameters.depth*1)
 	
 	for(var x = 0; x < nCubes.x; x++){
@@ -146,7 +143,7 @@ onRenderFcts.push(function(){
 				mesh.position.y = (y-nCubes.y/2+0.5) * mesh.scale.y * size.y
 				mesh.position.z = (z-nCubes.z/2+0.5) * mesh.scale.z * size.z
 
-				mesh.position.y += 3 + nCubes.y/2 * size.y * mesh.scale.y
+				mesh.position.y += nCubes.y/2 * size.y * mesh.scale.y
 			        scene.add(mesh)
 			        
 				var ammoControls = new THREEx.AmmoControls(mesh)
@@ -188,6 +185,7 @@ onRenderFcts.push(function(){
 	model.receiveShadow = true
 
 	window.addEventListener( 'mousedown', function( event ) {
+		if ( event.target !== renderer.domElement )	return
 		if ( clickRequest === true ) return
 		clickRequest = true;
 		mouseCoords.x =   ( event.clientX / window.innerWidth ) * 2 - 1
@@ -227,39 +225,6 @@ onRenderFcts.push(function(){
 		ballBody.setLinearVelocity( new Ammo.btVector3( position.x, position.y, position.z ) );
 	})
 })()
-
-////////////////////////////////////////////////////////////////////////////////
-//          Code Separator
-////////////////////////////////////////////////////////////////////////////////
-
-// http://stackoverflow.com/questions/31991267/bullet-physicsammo-js-in-asm-js-how-to-get-collision-impact-force
-// 
-// function playingWithCollision(){
-// 	var dispatcher = ammoWorld.physicsWorld.getDispatcher()
-// 	var nManifolds = dispatcher.getNumManifolds()
-// console.log('nManifolds', nManifolds)	
-// 	for(var i = 0; i < nManifolds; i++){
-// 	    var manifold = dispatcher.getManifoldByIndexInternal(i);
-// 
-// 	    var nContact = manifold.getNumContacts();
-// 	    if (nContact === 0) continue
-// 
-// 	    for(var j = 0; j < nContact; j++){
-// 	        var contactPoint = manifold.getContactPoint(j);
-// 	        console.log('body 1: ', manifold.getBody0());
-// 	        console.log('body 2: ', manifold.getBody1());
-// window.body0= manifold.getBody0()
-// window.body1= manifold.getBody1()
-// 	        console.log('COLLISION DETECTED!');
-// 	        // HERE: how to get impact force details?
-// 	        console.log( 'applied impulse', contactPoint.getAppliedImpulse() )
-// 	    }
-// 	}
-// }
-// 
-// onRenderFcts.push(function(){
-// 	playingWithCollision()
-// })
 
 })
 

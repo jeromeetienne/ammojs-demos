@@ -1,4 +1,15 @@
-function startUpp(callback){
+/**
+ * seems to be the starting of a boilerplate
+ * - remove the lines which are in all three.js demo
+ * - make it tunable, like with ammo.js or not
+ * - make it easily integrable
+ *
+ * ## TODO
+ * - handle the loading in this funciton
+ *   - document write for now
+ */
+
+function startUpTHREEjs(callback){
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Init
 	//////////////////////////////////////////////////////////////////////////////////
@@ -62,5 +73,9 @@ function startUpp(callback){
 		})
 	})
 	
-	callback( renderer, scene, camera, onRenderFcts )
+	//////////////////////////////////////////////////////////////////////////////
+	//		Code Separator
+	//////////////////////////////////////////////////////////////////////////////
+	
+	callback( renderer, scene, camera, controls, onRenderFcts )
 }

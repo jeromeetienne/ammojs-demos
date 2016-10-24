@@ -135,7 +135,7 @@ onRenderFcts.push(function(){
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-return
+// return
 	var geometry = new THREE.BoxGeometry(400,0.1,400)
         var material = new THREE.MeshPhongMaterial({
 		map: new THREE.TextureLoader().load("../../textures/grid.png", function onLoad(texture){
@@ -162,50 +162,47 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-// return
-	var geometry = new THREE.PlaneGeometry(20, 20)
-	var material = new THREE.MeshLambertMaterial({
-		map: new THREE.TextureLoader().load("images/box.png", function onLoad(texture){
+return
+	var geometry = new THREE.PlaneGeometry(60, 60)
+	var material = new THREE.MeshBasicMaterial({
+		map: new THREE.TextureLoader().load("../../textures/grid.png", function onLoad(texture){
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			texture.repeat.set(geometry.parameters.width,geometry.parameters.height)
 			texture.anisotropy = renderer.getMaxAnisotropy()
-		}),
-		
+		})
 	});
-	var model = new THREE.Mesh(geometry, material)
-	model.receiveShadow = true
 	
 	// bottom
-	var mesh = model.clone()
+	var mesh = new THREE.Mesh(geometry, material)
 	mesh.position.y = -geometry.parameters.width/2
 	mesh.rotateX(-Math.PI/2)
 	addStaticPlane(mesh)
 
 	// top
-	var mesh = model.clone()
+	var mesh = new THREE.Mesh(geometry, material)
 	mesh.position.y = +geometry.parameters.width/2
 	mesh.rotateX(+Math.PI/2)
 	addStaticPlane(mesh)
 
 	// left
-	var mesh = model.clone()
+	var mesh = new THREE.Mesh(geometry, material)
 	mesh.position.x = -geometry.parameters.width/2
 	mesh.rotateY(Math.PI/2)
 	addStaticPlane(mesh)
 	
 	// right
-	var mesh = model.clone()
+	var mesh = new THREE.Mesh(geometry, material)
 	mesh.position.x = +geometry.parameters.width/2
 	mesh.rotateY(-Math.PI/2)
 	addStaticPlane(mesh)
 	
 	// back
-	var mesh = model.clone()
+	var mesh = new THREE.Mesh(geometry, material)
 	mesh.position.z = -geometry.parameters.height/2
 	addStaticPlane(mesh)
 
 	// front
-	var mesh = model.clone()
+	var mesh = new THREE.Mesh(geometry, material)
 	mesh.position.z =  geometry.parameters.height/2
 	mesh.rotateY(-Math.PI)
 	addStaticPlane(mesh)
@@ -218,7 +215,7 @@ return
 			mass: 0,
 			shape: shape,
 		})
-		ammoControls.setRestitution(1.0)
+		ammoControls.setRestitution(0.9)
 		ammoWorld.add(ammoControls)		
 	}
 })()
@@ -256,31 +253,8 @@ return
 	}
 })()
 
-//////////////////////////////////////////////////////////////////////////////
-//		Code Separator
-//////////////////////////////////////////////////////////////////////////////
-
-;(function(){
-	onRenderFcts.push(function(){
-	        var gravity = new THREE.Vector3( 0, -9.81, 0 );
-		
-		// var matrix = this.matrixWorld
-		var matrix = new THREE.Matrix4().makeRotationFromQuaternion(camera.quaternion)
-		gravity.applyMatrix4( matrix )
-		
-		console.log('gravity', gravity)
-		
-	        // gravity
-	        ammoWorld.physicsWorld.setGravity( new Ammo.btVector3( gravity.x, gravity.y, gravity.z ) );
-		
-		ammoWorld._ammoControls.forEach(function(ammoControls){
-			ammoControls.physicsBody.activate()
-		})
-	})
-})()
-
 ////////////////////////////////////////////////////////////////////////////////
-//          control poolball with keyboard
+//          bunch of sphere falling
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
@@ -366,7 +340,6 @@ window.ballBody = ballBody
 //////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-return
 	var points = [];
 	var radius = 30
 	points.push( new THREE.Vector3(0,0,0) );
@@ -394,6 +367,7 @@ return
 	
 	var line = new THREE.Line( geometry, material );
 	scene.add(line)
+window.spline = spline
 
 	var geometry = new THREE.BoxGeometry(0.5,1,0.25)
 	var material = new THREE.MeshPhongMaterial({
@@ -519,75 +493,8 @@ return
 		}
 	}
 })()
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-//          throw dice
-////////////////////////////////////////////////////////////////////////////////
-
-;(function(){
-return
-	var geometry = new THREE.BoxGeometry(1,1,1)
-	var material = new THREE.MeshPhongMaterial({
-		map: new THREE.TextureLoader().load('images/UV_Grid_Sm.jpg')
-	});
-	var model = new THREE.Mesh(geometry, material)
-	model.scale.multiplyScalar(3)
-	model.castShadow = true
-	model.receiveShadow = true
-
-	
-	var mouseCoords = new THREE.Vector2()
-	mouseCoords.x += THREE.Math.randFloatSpread(1)
-	mouseCoords.y += THREE.Math.randFloatSpread(1)+0.2
-	throwDice(mouseCoords)
-
-	var mouseCoords = new THREE.Vector2()
-	mouseCoords.x += THREE.Math.randFloatSpread(1)
-	mouseCoords.y += THREE.Math.randFloatSpread(1)+0.5
-	throwDice(mouseCoords)
-
-	var mouseCoords = new THREE.Vector2()
-	mouseCoords.x += THREE.Math.randFloatSpread(1)+0.8
-	mouseCoords.y += THREE.Math.randFloatSpread(1)
-	throwDice(mouseCoords)
-
-	function throwDice(mouseCoords){
-		// console.log('mouseCoords', mouseCoords)
-		var raycaster = new THREE.Raycaster();
-		raycaster.setFromCamera( mouseCoords, camera );
-
-		// Creates a ball
-		var position = new THREE.Vector3();
-		var quaternion = new THREE.Quaternion();
-
-		position.copy( raycaster.ray.direction );
-		position.add( raycaster.ray.origin );
-		quaternion.set( Math.random(), Math.random(), Math.random(), Math.random() ).normalize();
-		
-		// create mesh
-		var mesh = model.clone()
-		mesh.position.copy(position)
-		mesh.quaternion.copy(quaternion)
-	        scene.add(mesh)
-	        
-		var ammoControls = new THREEx.AmmoControls(mesh)
-		ammoWorld.add(ammoControls)
-
-		position.copy( raycaster.ray.direction );
-		position.multiplyScalar( 25 );
-		ammoControls.physicsBody.setLinearVelocity( new Ammo.btVector3( position.x, position.y, position.z ) );
-
-		var angularVelocity = new Ammo.btVector3( 0,0,0 )
-		angularVelocity.setX(THREE.Math.randFloatSpread(360) * THREE.Math.DEG2RAD)
-		angularVelocity.setY(THREE.Math.randFloatSpread(360) * THREE.Math.DEG2RAD)
-		angularVelocity.setZ(THREE.Math.randFloatSpread(360) * THREE.Math.DEG2RAD)
-		ammoControls.physicsBody.setAngularVelocity( angularVelocity );
-		
-		ammoControls.physicsBody.setRestitution(0.6)
-	}
-})()
+</script>
+<script>
 
 ////////////////////////////////////////////////////////////////////////////////
 //          throw a ball in front of the camera 
@@ -606,7 +513,7 @@ return
 	var model = THREEx.createPoolBall()
 
 	// var model = THREEx.SportBalls.createSoftball()
-	model.scale.multiplyScalar(4)
+	model.scale.multiplyScalar(2)
 	model.castShadow = true
 	model.receiveShadow = true
 
@@ -643,7 +550,7 @@ return
 		ammoWorld.add(ammoControls)	
 
 		var ballBody = ammoControls.physicsBody
-		ballBody.setFriction( 1 );
+		// ballBody.setFriction( 10 );
 		ballBody.setRestitution(0.4)
 
 		position.copy( raycaster.ray.direction );
