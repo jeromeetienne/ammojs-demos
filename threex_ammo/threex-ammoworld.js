@@ -22,7 +22,7 @@ THREEx.AmmoWorld = function(){
 THREEx.AmmoWorld.prototype.update = function(){
         var deltaTime = this._clock.getDelta();
         // compute physics
-        this.physicsWorld.stepSimulation( deltaTime, 10 );
+        this.physicsWorld.stepSimulation( deltaTime*1.5, 10 );
 
         // update all ammoControls
         var btTransform = new Ammo.btTransform();
@@ -56,4 +56,5 @@ THREEx.AmmoWorld.prototype.add = function(ammoControls){
 THREEx.AmmoWorld.prototype.remove = function(ammoControls){
         console.assert(ammoControls instanceof THREEx.AmmoControls)        
         ammoWorld.physicsWorld.removeRigidBody( ammoControls.physicsWorld )
+        console.assert(false, 'remove it from _ammoControls too!')
 }

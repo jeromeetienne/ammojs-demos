@@ -14,7 +14,6 @@
 <script>THREEx.SportBalls.baseURL='../../vendor/threex.sportballs/'</script>
 
 <script src='../../vendor/threex.poolball/threex.poolball.js'></script>
-<script>THREEx.SportBalls.baseURL='../../vendor/threex.poolball/'</script>
 
 <div style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px; color: white;'>
 	Playing with <a href="http://threejs.org" target="_blank">three.js</a>
@@ -164,7 +163,7 @@ onRenderFcts.push(function(){
 
 ;(function(){
 return
-	var geometry = new THREE.PlaneGeometry(20, 20)
+	var geometry = new THREE.PlaneGeometry(60, 60)
 	var material = new THREE.MeshBasicMaterial({
 		map: new THREE.TextureLoader().load("../../textures/grid.png", function onLoad(texture){
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -259,6 +258,7 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
+return
 	var mesh = THREEx.createPoolBall()
 	
 	// var mesh = new THREE.Mesh(geometry, material)
@@ -266,7 +266,7 @@ return
 	mesh.receiveShadow = true
         scene.add(mesh)
 
-	mesh.scale.multiplyScalar(2)
+	mesh.scale.multiplyScalar(4)
 	mesh.position.x = 0
 	mesh.position.y = 0
 	mesh.position.z = 4
@@ -286,8 +286,8 @@ window.ballBody = ballBody
 	onRenderFcts.push(function(){
 		var delta = clock.getDelta()
 		
-		camera.position.x = mesh.position.x
-		camera.position.z = mesh.position.z+15
+		// camera.position.x = mesh.position.x
+		// camera.position.z = mesh.position.z+15
 		
 		// if( ammoControls.object3d.position.y > -1.9)	return
 
@@ -298,7 +298,7 @@ window.ballBody = ballBody
 		if( state.left === true ) force.op_add(new Ammo.btVector3(-1,0,0))
 		if( state.right === true ) force.op_add(new Ammo.btVector3(+1,0,0))
 
-		force.op_mul(600 * Math.pow(mesh.scale.x,2) * delta)
+		force.op_mul(1400 * Math.pow(mesh.scale.x,2) * delta)
 
 		ammoControls.physicsBody.activate()
 		ammoControls.physicsBody.applyCentralForce(force)
@@ -306,7 +306,7 @@ window.ballBody = ballBody
 		if( state.jump === true ){
 			state.jump = false
 			
-			var impulse = new Ammo.btVector3(0,30,0)
+			var impulse = new Ammo.btVector3(0,300,0)
 			ammoControls.physicsBody.applyCentralImpulse(impulse)
 		}
 	})
@@ -342,25 +342,41 @@ window.ballBody = ballBody
 ;(function(){
 // return
 	var geometry = new THREE.BoxGeometry(1,1,1)
-	var material = new THREE.MeshNormalMaterial({
-		wireframe: true
+	var material = new THREE.MeshPhongMaterial({
+		// wireframe: true
 	});
 	var model = new THREE.Mesh(geometry, material)
-	var model = THREEx.Crates.createCrate0()
+	// var model = THREEx.Crates.createCrate0()
 	// model.scale.multiplyScalar(0.5)
 	model.castShadow = true
 	model.receiveShadow = true
 
-	var nCubes = new THREE.Vector3(20,5,1)
+				
+	var nCubes = new THREE.Vector3(20/2,20/2,1)
 
-	var size = new THREE.Vector3(geometry.parameters.width*1.1
-			, geometry.parameters.height*1.1
+	// var texture = THREE.ImageUtils.loadTexture('images/NewTennisBallColor.jpg')
+	var texture = THREE.ImageUtils.loadTexture('images/Yeah-If-The-Lazy-Mexicans-Could-Quit-Raping-Everybody-ThatD-Be-Great-Funny-Donald-Trump-Meme-Image.jpg')
+	model.material.map = texture
+
+	var size = new THREE.Vector3(geometry.parameters.width*1.05
+			, geometry.parameters.height*1.05
 			, geometry.parameters.depth*1)
 	
 	for(var x = 0; x < nCubes.x; x++){
 		for(var y = 0; y < nCubes.y; y++){
 			for(var z = 0; z < nCubes.z; z++){
-				var mesh = model.clone()
+				// var mesh = model.clone()
+				// model.geometry = model.geometry.clone()
+				
+				var geometry = new THREE.BoxGeometry(1,1,1)
+				var mesh = new THREE.Mesh(geometry, material)
+					mesh.castShadow = true
+					mesh.receiveShadow = true
+
+				change_uvs( geometry, 1 / nCubes.x, 1 / nCubes.y, x, y );
+				
+				
+				
 				mesh.position.x = (x-nCubes.x/2+0.5) * mesh.scale.x * size.x
 				mesh.position.y = (y-nCubes.y/2+0.5) * mesh.scale.y * size.y
 				mesh.position.z = (z-nCubes.z/2+0.5) * mesh.scale.z * size.z
@@ -370,6 +386,18 @@ window.ballBody = ballBody
 			        
 				var ammoControls = new THREEx.AmmoControls(mesh)
 				ammoWorld.add(ammoControls)	
+			}
+		}
+	}
+	
+	function change_uvs( geometry, unitx, unity, offsetx, offsety ) {
+		var faceVertexUvs = geometry.faceVertexUvs[ 0 ];
+		for ( var i = 0; i < faceVertexUvs.length; i ++ ) {
+			var uvs = faceVertexUvs[ i ];
+			for ( var j = 0; j < uvs.length; j ++ ) {
+				var uv = uvs[ j ];				
+				uv.x = ( uv.x + offsetx ) * unitx;
+				uv.y = ( uv.y + offsety ) * unity;
 			}
 		}
 	}
@@ -410,7 +438,7 @@ return
 //          throw a ball in front of the camera 
 ////////////////////////////////////////////////////////////////////////////////
 ;(function(){
-return
+// return
 	var clickRequest = false;
 	var mouseCoords = new THREE.Vector2();
 	
@@ -420,7 +448,7 @@ return
 	// });
 	// var model = new THREE.Mesh(geometry, material)
 	var model = THREEx.SportBalls.createBasket()
-	var model = THREEx.SportBalls.createSoftball()
+	// var model = THREEx.SportBalls.createSoftball()
 	model.scale.multiplyScalar(2)
 	model.castShadow = true
 	model.receiveShadow = true
