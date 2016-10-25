@@ -41,6 +41,7 @@
 	// init scene and camera
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+	camera.position.y = 3;
 	camera.position.z = 10;
 	var controls	= new THREE.OrbitControls(camera)
 	controls.enableKeys = false
@@ -126,6 +127,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 var ammoWorld = new THREEx.AmmoWorld()
+ammoWorld.collisionEnabled = true
 onRenderFcts.push(function(){
 	ammoWorld.update()
 })
@@ -135,7 +137,7 @@ onRenderFcts.push(function(){
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-return
+// return
 	var geometry = new THREE.BoxGeometry(400,0.1,400)
         var material = new THREE.MeshPhongMaterial({
 		map: new THREE.TextureLoader().load("../../textures/grid.png", function onLoad(texture){
@@ -145,7 +147,7 @@ return
 		})
 	});
         var mesh = new THREE.Mesh(geometry, material)
-	mesh.position.y = -mesh.geometry.parameters.height/2 - 3
+	mesh.position.y = -mesh.geometry.parameters.height/2
 	mesh.receiveShadow = true
         scene.add(mesh)
 	
@@ -162,7 +164,7 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-// return
+return
 	var geometry = new THREE.PlaneGeometry(20, 20)
 	var material = new THREE.MeshLambertMaterial({
 		map: new THREE.TextureLoader().load("images/box.png", function onLoad(texture){
@@ -227,7 +229,7 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-return
+// return
 	var geometry = new THREE.SphereGeometry(0.5, 16, 10)
 	var material = new THREE.MeshNormalMaterial({
 		wireframe: true
@@ -244,7 +246,7 @@ return
 	model.receiveShadow = true
 	
 	
-	for(var i = 0; i < 100; i++){
+	for(var i = 0; i < 1; i++){
 	        var mesh = model.clone()
 		mesh.position.y = 3+Math.random()*3
 		mesh.position.x = (Math.random()-0.5)*15
@@ -253,6 +255,20 @@ return
 	        
 		var ammoControls = new THREEx.AmmoControls(mesh)
 		ammoWorld.add(ammoControls)	
+
+		var collisionHappened = false
+		ammoControls.addEventListener('collided', function(event){
+			if( collisionHappened === true )	return
+			collisionHappened = true
+			
+			var model = THREEx.createPoolBall()
+			scene.add(model)
+				
+			var btVector3 = event.btContactPoint.getPositionWorldOnA()
+			model.position.x = btVector3.x()
+			model.position.y = btVector3.y()
+			model.position.z = btVector3.z()
+		})
 	}
 })()
 
@@ -261,6 +277,7 @@ return
 //////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
+return
 	onRenderFcts.push(function(){
 	        var gravity = new THREE.Vector3( 0, -9.81, 0 );
 		
@@ -274,7 +291,7 @@ return
 	        ammoWorld.physicsWorld.setGravity( new Ammo.btVector3( gravity.x, gravity.y, gravity.z ) );
 		
 		ammoWorld._ammoControls.forEach(function(ammoControls){
-			ammoControls.physicsBody.activate()
+			ammoControls.body.activate()
 		})
 	})
 })()
@@ -301,7 +318,7 @@ return
 
 	ammoWorld.add(ammoControls)
 camera.position.z = 20
-	var ballBody = ammoControls.physicsBody
+	var ballBody = ammoControls.body
 	ballBody.setFriction( 100 );
 	ballBody.setRestitution(0.8)
 	ballBody.setDamping(0.4,0)
@@ -326,14 +343,14 @@ window.ballBody = ballBody
 
 		force.op_mul(1400 * Math.pow(mesh.scale.x,2) * delta)
 
-		ammoControls.physicsBody.activate()
-		ammoControls.physicsBody.applyCentralForce(force)
+		ammoControls.body.activate()
+		ammoControls.body.applyCentralForce(force)
 		
 		if( state.jump === true ){
 			state.jump = false
 			
 			var impulse = new Ammo.btVector3(0,300,0)
-			ammoControls.physicsBody.applyCentralImpulse(impulse)
+			ammoControls.body.applyCentralImpulse(impulse)
 		}
 	})
 	
@@ -398,6 +415,7 @@ return
 	var geometry = new THREE.BoxGeometry(0.5,1,0.25)
 	var material = new THREE.MeshPhongMaterial({
 		// wireframe: true
+		map: new THREE.TextureLoader().load("images/dominos-free-stock-photo-illustration-of-a-domino-tile-15074-pbN2OI-clipart.png")
 	});
 	var model = new THREE.Mesh(geometry, material)
 	model.scale.multiplyScalar(4)
@@ -411,7 +429,7 @@ return
 		scene.add(mesh)
 
 		var position = spline.getPoint( index );
-		position.y = -3 + mesh.geometry.parameters.height/2
+		position.y = mesh.geometry.parameters.height/2
 		mesh.position.copy(position)
 		
 		// mesh.rotation.copy(rotation)
@@ -577,15 +595,15 @@ return
 
 		position.copy( raycaster.ray.direction );
 		position.multiplyScalar( 25 );
-		ammoControls.physicsBody.setLinearVelocity( new Ammo.btVector3( position.x, position.y, position.z ) );
+		ammoControls.body.setLinearVelocity( new Ammo.btVector3( position.x, position.y, position.z ) );
 
 		var angularVelocity = new Ammo.btVector3( 0,0,0 )
 		angularVelocity.setX(THREE.Math.randFloatSpread(360) * THREE.Math.DEG2RAD)
 		angularVelocity.setY(THREE.Math.randFloatSpread(360) * THREE.Math.DEG2RAD)
 		angularVelocity.setZ(THREE.Math.randFloatSpread(360) * THREE.Math.DEG2RAD)
-		ammoControls.physicsBody.setAngularVelocity( angularVelocity );
+		ammoControls.body.setAngularVelocity( angularVelocity );
 		
-		ammoControls.physicsBody.setRestitution(0.6)
+		ammoControls.body.setRestitution(0.6)
 	}
 })()
 
@@ -610,7 +628,7 @@ return
 	model.castShadow = true
 	model.receiveShadow = true
 
-	window.addEventListener( 'click', function( event ) {
+	window.addEventListener( 'mousedown', function( event ) {
 		if ( event.target !== renderer.domElement )	return
 		if ( clickRequest === true ) return
 		clickRequest = true;
@@ -642,7 +660,7 @@ return
 		var ammoControls = new THREEx.AmmoControls(mesh)
 		ammoWorld.add(ammoControls)	
 
-		var ballBody = ammoControls.physicsBody
+		var ballBody = ammoControls.body
 		ballBody.setFriction( 1 );
 		ballBody.setRestitution(0.4)
 
@@ -651,39 +669,5 @@ return
 		ballBody.setLinearVelocity( new Ammo.btVector3( position.x, position.y, position.z ) );
 	})
 })()
-
-////////////////////////////////////////////////////////////////////////////////
-//          Code Separator
-////////////////////////////////////////////////////////////////////////////////
-
-// http://stackoverflow.com/questions/31991267/bullet-physicsammo-js-in-asm-js-how-to-get-collision-impact-force
-// 
-// function playingWithCollision(){
-// 	var dispatcher = ammoWorld.physicsWorld.getDispatcher()
-// 	var nManifolds = dispatcher.getNumManifolds()
-// console.log('nManifolds', nManifolds)	
-// 	for(var i = 0; i < nManifolds; i++){
-// 	    var manifold = dispatcher.getManifoldByIndexInternal(i);
-// 
-// 	    var nContact = manifold.getNumContacts();
-// 	    if (nContact === 0) continue
-// 
-// 	    for(var j = 0; j < nContact; j++){
-// 	        var contactPoint = manifold.getContactPoint(j);
-// 	        console.log('body 1: ', manifold.getBody0());
-// 	        console.log('body 2: ', manifold.getBody1());
-// window.body0= manifold.getBody0()
-// window.body1= manifold.getBody1()
-// 	        console.log('COLLISION DETECTED!');
-// 	        // HERE: how to get impact force details?
-// 	        console.log( 'applied impulse', contactPoint.getAppliedImpulse() )
-// 	    }
-// 	}
-// }
-// 
-// onRenderFcts.push(function(){
-// 	playingWithCollision()
-// })
-
 </script>
 </body>

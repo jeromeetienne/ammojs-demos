@@ -8,8 +8,6 @@
   - ammoWorld.update()
 - THREEx.AmmoControls(object3d)
 
-# 
-
 # Possible demo
 - pool ball
 - domino
@@ -38,3 +36,17 @@
 # Plan to import vehicule
 - take the three.js demo
 - port it bit by bit
+
+# Demo Domino
+- find textures for the dominoes
+- make a spiral shape for the line of dominoes
+  - maybe to do a text in cursive writing
+- if possible, sounds/particles on collision
+
+# Demo Image-Destruction
+- have the possibility to change your image
+  - be careful with the source image aspect
+  - store it in the url's hash
+- if possible, sounds/particles on collision
+- maybe ability to renew experiences with a different images once one is completed
+- have a preset of multiple images in the 'info'

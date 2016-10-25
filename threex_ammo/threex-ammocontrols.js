@@ -38,9 +38,17 @@ THREEx.AmmoControls = function(object3d, options){
         
         var rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia );
         var body = new Ammo.btRigidBody( rbInfo );
+// console.log('body', body)
+
+        body.setUserIndex(this.object3d.id)
+        this.object3d.userData.ammoControls = this
         
-        this.physicsBody = body
+        this.body = body
+
+        this.physicsBody = this.body // Deprecated
 }
+
+Object.assign( THREEx.AmmoControls.prototype, THREE.EventDispatcher.prototype )
 
 ////////////////////////////////////////////////////////////////////////////////
 //          Code Separator
@@ -124,4 +132,3 @@ THREEx.AmmoControls.prototype.setLinearVelocity = function(x,y,z){
         this.physicsBody.activate()
         // this.physicsBody.setActivationState(th.DISABLE_DEACTIVATION);
 }
-
