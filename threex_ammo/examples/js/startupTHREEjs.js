@@ -7,6 +7,7 @@
  * ## TODO
  * - handle the loading in this funciton
  *   - document write for now
+ * - have an options parameter
  */
 
 function startUpTHREEjs(callback){

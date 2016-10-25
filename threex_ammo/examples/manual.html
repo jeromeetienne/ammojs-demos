@@ -475,12 +475,10 @@ return
 				
 				var geometry = new THREE.BoxGeometry(1,1,1)
 				var mesh = new THREE.Mesh(geometry, material)
-					mesh.castShadow = true
-					mesh.receiveShadow = true
+				mesh.castShadow = true
+				mesh.receiveShadow = true
 
 				change_uvs( geometry, 1 / nCubes.x, 1 / nCubes.y, x, y );
-				
-				
 				
 				mesh.position.x = (x-nCubes.x/2+0.5) * mesh.scale.x * size.x
 				mesh.position.y = (y-nCubes.y/2+0.5) * mesh.scale.y * size.y
