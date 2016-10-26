@@ -117,60 +117,64 @@ onRenderFcts.push(function(){
 	model.castShadow = true
 	model.receiveShadow = true
 
-				
-	var nCubes = new THREE.Vector3(20/2,20/2,1)
-
 	if( location.hash.substring(1) !== '' ){
 		var url = decodeURIComponent(location.hash.substring(1))
 	}else{
 		var url = 'images/Yeah-If-The-Lazy-Mexicans-Could-Quit-Raping-Everybody-ThatD-Be-Great-Funny-Donald-Trump-Meme-Image.jpg'
+		var url = 'images/BasketballColor.jpg'
 	}
-	// 'images/UV_Grid_Sm.jpg'
-	var texture = new THREE.TextureLoader().load(url)
+	var texture = new THREE.TextureLoader().load(url, function(texture){
+		var textureAspect = texture.image.width / texture.image.height
+		var nCubes = new THREE.Vector3(10*textureAspect,10,1)
+		buildCratesPile(nCubes)
+	})
 	model.material.map = texture
 
 	var size = new THREE.Vector3(geometry.parameters.width*1
 			, geometry.parameters.height*1
 			, geometry.parameters.depth*1)
-	
-	for(var x = 0; x < nCubes.x; x++){
-		for(var y = 0; y < nCubes.y; y++){
-			for(var z = 0; z < nCubes.z; z++){
-				// var mesh = model.clone()
-				// model.geometry = model.geometry.clone()
-				
-				var geometry = new THREE.BoxGeometry(1,1,1)
-				var mesh = new THREE.Mesh(geometry, material)
-					mesh.castShadow = true
-					mesh.receiveShadow = true
 
-				change_uvs( geometry, 1 / nCubes.x, 1 / nCubes.y, x, y );
-				
-				
-				
-				mesh.position.x = (x-nCubes.x/2+0.5) * mesh.scale.x * size.x
-				mesh.position.y = (y-nCubes.y/2+0.5) * mesh.scale.y * size.y
-				mesh.position.z = (z-nCubes.z/2+0.5) * mesh.scale.z * size.z
+	function buildCratesPile( nCubes){		
+		for(var x = 0; x < nCubes.x; x++){
+			for(var y = 0; y < nCubes.y; y++){
+				for(var z = 0; z < nCubes.z; z++){
+					// var mesh = model.clone()
+					// model.geometry = model.geometry.clone()
+					
+					var geometry = new THREE.BoxGeometry(1,1,1)
+					var mesh = new THREE.Mesh(geometry, material)
+						mesh.castShadow = true
+						mesh.receiveShadow = true
 
-				mesh.position.y += nCubes.y/2 * size.y * mesh.scale.y
-			        scene.add(mesh)
-			        
-				var ammoControls = new THREEx.AmmoControls(mesh)
-				ammoWorld.add(ammoControls)	
+					change_uvs( geometry, 1 / nCubes.x, 1 / nCubes.y, x, y );
+					
+					
+					
+					mesh.position.x = (x-nCubes.x/2+0.5) * mesh.scale.x * size.x
+					mesh.position.y = (y-nCubes.y/2+0.5) * mesh.scale.y * size.y
+					mesh.position.z = (z-nCubes.z/2+0.5) * mesh.scale.z * size.z
+
+					mesh.position.y += nCubes.y/2 * size.y * mesh.scale.y
+				        scene.add(mesh)
+				        
+					var ammoControls = new THREEx.AmmoControls(mesh)
+					ammoWorld.add(ammoControls)	
+				}
 			}
 		}
-	}
-	
-	function change_uvs( geometry, unitx, unity, offsetx, offsety ) {
-		var faceVertexUvs = geometry.faceVertexUvs[ 0 ];
-		for ( var i = 0; i < faceVertexUvs.length; i ++ ) {
-			var uvs = faceVertexUvs[ i ];
-			for ( var j = 0; j < uvs.length; j ++ ) {
-				var uv = uvs[ j ];				
-				uv.x = ( uv.x + offsetx ) * unitx;
-				uv.y = ( uv.y + offsety ) * unity;
+		
+		function change_uvs( geometry, unitx, unity, offsetx, offsety ) {
+			var faceVertexUvs = geometry.faceVertexUvs[ 0 ];
+			for ( var i = 0; i < faceVertexUvs.length; i ++ ) {
+				var uvs = faceVertexUvs[ i ];
+				for ( var j = 0; j < uvs.length; j ++ ) {
+					var uv = uvs[ j ];				
+					uv.x = ( uv.x + offsetx ) * unitx;
+					uv.y = ( uv.y + offsety ) * unity;
+				}
 			}
 		}
+		
 	}
 })()
 
