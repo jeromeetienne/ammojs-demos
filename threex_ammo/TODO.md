@@ -38,7 +38,7 @@
 - port it bit by bit
 
 # Demo Domino
-- find textures for the dominoes
+- DONE find textures for the dominoes
 - make a spiral shape for the line of dominoes
   - maybe to do a text in cursive writing
 - if possible, sounds/particles on collision
