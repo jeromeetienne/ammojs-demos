@@ -17,10 +17,6 @@
 	and <a href="https://github.com/kripken/ammo.js/">ammo.js</a> 
 	- source on <a href="https://github.com/jeromeetienne/ammojs-demos/">github</a>
 	<br> Click to throw balls!
-	<br>
-	<a href="#images/Yeah-If-The-Lazy-Mexicans-Could-Quit-Raping-Everybody-ThatD-Be-Great-Funny-Donald-Trump-Meme-Image.jpg" onclick="javascript:location.reload()">trump</a>
-	-
-	<a href="#images/UV_Grid_Sm.jpg" onclick="javascript:location.reload()">UV Grid</a>
 </div><body style='margin: 0px; overflow: hidden; text-align:center;'><script>
 
 startUpTHREEjs(function(renderer, scene, camera, controls, onRenderFcts){
@@ -28,7 +24,6 @@ startUpTHREEjs(function(renderer, scene, camera, controls, onRenderFcts){
 camera.position.y = 10;
 camera.position.z = 20;
 camera.lookAt(new THREE.Vector3(0,3,0))
-controls.enabled = false
 
 //////////////////////////////////////////////////////////////////////////////////
 //		set 3 point lighting						//
@@ -81,13 +76,14 @@ onRenderFcts.push(function(){
 
 ;(function(){
 // return
-	var geometry = new THREE.BoxGeometry(40,0.1,40)
+	var geometry = new THREE.BoxGeometry(120,0.1,120)
         var material = new THREE.MeshPhongMaterial({
 		map: new THREE.TextureLoader().load("../../textures/grid.png", function onLoad(texture){
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 			texture.repeat.set(geometry.parameters.width,geometry.parameters.depth)
 			texture.anisotropy = renderer.getMaxAnisotropy()
-		})
+		}),
+		color: 'lightgreen'
 	});
         var mesh = new THREE.Mesh(geometry, material)
 	mesh.position.y = -mesh.geometry.parameters.height/2
@@ -102,75 +98,75 @@ onRenderFcts.push(function(){
 	ammoWorld.add(ammoControls)	
 })()
 
-////////////////////////////////////////////////////////////////////////////////
-//          Pile of crate
-////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//		Domino
+//////////////////////////////////////////////////////////////////////////////
+
 ;(function(){
 // return
-	var geometry = new THREE.BoxGeometry(1,1,1)
-	var material = new THREE.MeshPhongMaterial({
-		// wireframe: true
-	});
+	var points = [];
+	var radius = 30
+	points.push( new THREE.Vector3(0,0,0) );
+	points.push( new THREE.Vector3(0,0,-radius) );
+	points.push( new THREE.Vector3(radius,0,-radius) );
+	points.push( new THREE.Vector3(radius,0,0) );
+	points.push( new THREE.Vector3(radius*2,0,0) );
+	
+
+	var geometry = new THREE.Geometry()
+
+	var n_sub = 6;
+	// var spline = new THREE.Spline( points );
+	var spline = new THREE.CatmullRomCurve3( points );
+	// spline.type = 'chordal';
+				
+	for ( i = 0; i < points.length * n_sub; i ++ ) {
+		var index = i / ( points.length * n_sub );
+		var position = spline.getPoint( index );
+
+		geometry.vertices[ i ] = new THREE.Vector3( position.x, position.y, position.z );
+	}
+	
+	var material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 1, linewidth: 3} );
+	
+	var line = new THREE.Line( geometry, material );
+	scene.add(line)
+
+
+	
+	var texture = new THREE.TextureLoader().load("images/dominos-free-stock-photo-illustration-of-a-domino-tile-15074-pbN2OI-clipart.png") 
+	var materials = [];
+	for ( var i = 0; i < 6; i ++ ) {
+		if( i == 0 || i == 1 || i == 2 || i == 3 ){
+			materials.push( new THREE.MeshPhongMaterial() );
+		}else{
+			materials.push( new THREE.MeshPhongMaterial({ map: texture } ) );
+		}
+	}
+	var geometry = new THREE.BoxGeometry(0.5,1,0.25)
+	var material = new THREE.MeshFaceMaterial(materials)
 	var model = new THREE.Mesh(geometry, material)
-	// var model = THREEx.Crates.createCrate0()
-	// model.scale.multiplyScalar(0.5)
+	model.scale.multiplyScalar(4)
 	model.castShadow = true
 	model.receiveShadow = true
-
-				
-	var nCubes = new THREE.Vector3(20/2,20/2,1)
-
-	if( location.hash.substring(1) !== '' ){
-		var url = decodeURIComponent(location.hash.substring(1))
-	}else{
-		var url = 'images/Yeah-If-The-Lazy-Mexicans-Could-Quit-Raping-Everybody-ThatD-Be-Great-Funny-Donald-Trump-Meme-Image.jpg'
-	}
-	// 'images/UV_Grid_Sm.jpg'
-	var texture = new THREE.TextureLoader().load(url)
-	model.material.map = texture
-
-	var size = new THREE.Vector3(geometry.parameters.width*1
-			, geometry.parameters.height*1
-			, geometry.parameters.depth*1)
 	
-	for(var x = 0; x < nCubes.x; x++){
-		for(var y = 0; y < nCubes.y; y++){
-			for(var z = 0; z < nCubes.z; z++){
-				// var mesh = model.clone()
-				// model.geometry = model.geometry.clone()
-				
-				var geometry = new THREE.BoxGeometry(1,1,1)
-				var mesh = new THREE.Mesh(geometry, material)
-					mesh.castShadow = true
-					mesh.receiveShadow = true
+	var nDominoes = 40
+	for(var i = 0; i < nDominoes; i++){
+		var index = i/nDominoes
+		var mesh = model.clone()
+		scene.add(mesh)
 
-				change_uvs( geometry, 1 / nCubes.x, 1 / nCubes.y, x, y );
-				
-				
-				
-				mesh.position.x = (x-nCubes.x/2+0.5) * mesh.scale.x * size.x
-				mesh.position.y = (y-nCubes.y/2+0.5) * mesh.scale.y * size.y
-				mesh.position.z = (z-nCubes.z/2+0.5) * mesh.scale.z * size.z
-
-				mesh.position.y += nCubes.y/2 * size.y * mesh.scale.y
-			        scene.add(mesh)
-			        
-				var ammoControls = new THREEx.AmmoControls(mesh)
-				ammoWorld.add(ammoControls)	
-			}
-		}
-	}
-	
-	function change_uvs( geometry, unitx, unity, offsetx, offsety ) {
-		var faceVertexUvs = geometry.faceVertexUvs[ 0 ];
-		for ( var i = 0; i < faceVertexUvs.length; i ++ ) {
-			var uvs = faceVertexUvs[ i ];
-			for ( var j = 0; j < uvs.length; j ++ ) {
-				var uv = uvs[ j ];				
-				uv.x = ( uv.x + offsetx ) * unitx;
-				uv.y = ( uv.y + offsety ) * unity;
-			}
-		}
+		var position = spline.getPoint( index );
+		position.y = mesh.geometry.parameters.height/2
+		mesh.position.copy(position)
+		
+		// mesh.rotation.copy(rotation)
+		var tangent = spline.getTangent( index );
+		mesh.lookAt(tangent.clone().add(position))
+		
+		var ammoControls = new THREEx.AmmoControls(mesh)
+		ammoWorld.add(ammoControls)	
 	}
 })()
 

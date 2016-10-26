@@ -44,7 +44,7 @@
 - if possible, sounds/particles on collision
 
 # Demo Image-Destruction
-- have the possibility to change your image
+- DONE have the possibility to change your image
   - be careful with the source image aspect
   - store it in the url's hash
 - if possible, sounds/particles on collision

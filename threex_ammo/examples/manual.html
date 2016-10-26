@@ -86,6 +86,26 @@
 	})
 </script>
 <script>
+
+
+////////////////////////////////////////////////////////////////////////////////
+//          Init sounds
+////////////////////////////////////////////////////////////////////////////////
+
+var listener = new THREE.AudioListener();
+camera.add( listener );
+
+
+var audioLoader = new THREE.AudioLoader();
+var sound1 = new THREE.PositionalAudio( listener );
+audioLoader.load( 'sounds/kick.wav', function( buffer ) {
+	sound1.setBuffer( buffer );
+	sound1.setRefDistance( 20 );
+	// sound1.play()
+	// 
+});
+scene.add( sound1 );
+
 //////////////////////////////////////////////////////////////////////////////////
 //		set 3 point lighting						//
 //////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +147,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 var ammoWorld = new THREEx.AmmoWorld()
-// ammoWorld.collisionEnabled = true
+ammoWorld.collisionEnabled = true
 onRenderFcts.push(function(){
 	ammoWorld.update()
 })
@@ -150,7 +170,7 @@ onRenderFcts.push(function(){
 	mesh.position.y = -mesh.geometry.parameters.height/2
 	mesh.receiveShadow = true
         scene.add(mesh)
-	
+	mesh.name = 'ground'
 
 	var ammoControls = new THREEx.AmmoControls(mesh, {
 		mass: 0
@@ -252,7 +272,7 @@ return
 	model.receiveShadow = true
 	
 
-	var nBalls = 500
+	var nBalls = 1
 	// var nBalls = 1
 	for(var i = 0; i < nBalls; i++){
 	        var mesh = model.clone()
@@ -266,20 +286,30 @@ return
 		ammoControls.body.setRestitution(0.5)
 
 		var collisionHappened = false
+
 		ammoControls.addEventListener('collided', function(event){
+console.log(event.otherAmmoControls.object3d.name, event.btContactPoint.getAppliedImpulse())
+
 			if( collisionHappened === true )	return
 			collisionHappened = true
+
+			// var appliedImpulse = event.btContactPoint.getAppliedImpulse()
+			// if( appliedImpulse > 0.1 && event.otherAmmoControls.object3d.name === 'ground' ){
+			// 	sound1.play()
+			// }
 			
 			var model = THREEx.createPoolBall()
 			scene.add(model)
 			
 			var appliedImpulse = event.btContactPoint.getAppliedImpulse()
 			model.scale.multiplyScalar(appliedImpulse * 0.2)
-							
+			// console.log(appliedImpulse)			
+
 			var btVector3 = event.btContactPoint.getPositionWorldOnA()
 			model.position.x = btVector3.x()
 			model.position.y = btVector3.y()
 			model.position.z = btVector3.z()
+
 		})
 	}
 })()
@@ -388,134 +418,6 @@ window.ballBody = ballBody
 	window.addEventListener('keyup', function(event){
 		updateState(event.key, false)
 	})
-})()
-
-//////////////////////////////////////////////////////////////////////////////
-//		Domino
-//////////////////////////////////////////////////////////////////////////////
-
-;(function(){
-return
-	var points = [];
-	var radius = 30
-	points.push( new THREE.Vector3(0,0,0) );
-	points.push( new THREE.Vector3(0,0,-radius) );
-	points.push( new THREE.Vector3(radius,0,-radius) );
-	points.push( new THREE.Vector3(radius,0,0) );
-	points.push( new THREE.Vector3(radius*2,0,0) );
-	
-
-	var geometry = new THREE.Geometry()
-
-	var n_sub = 6;
-	// var spline = new THREE.Spline( points );
-	var spline = new THREE.CatmullRomCurve3( points );
-	// spline.type = 'chordal';
-				
-	for ( i = 0; i < points.length * n_sub; i ++ ) {
-		var index = i / ( points.length * n_sub );
-		var position = spline.getPoint( index );
-
-		geometry.vertices[ i ] = new THREE.Vector3( position.x, position.y, position.z );
-	}
-	
-	var material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 1, linewidth: 3} );
-	
-	var line = new THREE.Line( geometry, material );
-	scene.add(line)
-
-	var geometry = new THREE.BoxGeometry(0.5,1,0.25)
-	var material = new THREE.MeshPhongMaterial({
-		// wireframe: true
-		map: new THREE.TextureLoader().load("images/dominos-free-stock-photo-illustration-of-a-domino-tile-15074-pbN2OI-clipart.png")
-	});
-	var model = new THREE.Mesh(geometry, material)
-	model.scale.multiplyScalar(4)
-	model.castShadow = true
-	model.receiveShadow = true
-	
-	var nDominoes = 40
-	for(var i = 0; i < nDominoes; i++){
-		var index = i/nDominoes
-		var mesh = model.clone()
-		scene.add(mesh)
-
-		var position = spline.getPoint( index );
-		position.y = mesh.geometry.parameters.height/2
-		mesh.position.copy(position)
-		
-		// mesh.rotation.copy(rotation)
-		var tangent = spline.getTangent( index );
-		mesh.lookAt(tangent.clone().add(position))
-		
-		var ammoControls = new THREEx.AmmoControls(mesh)
-		ammoWorld.add(ammoControls)	
-	}
-})()
-
-////////////////////////////////////////////////////////////////////////////////
-//          Pile of crate
-////////////////////////////////////////////////////////////////////////////////
-;(function(){
-return
-	var geometry = new THREE.BoxGeometry(1,1,1)
-	var material = new THREE.MeshPhongMaterial({
-		// wireframe: true
-	});
-	var model = new THREE.Mesh(geometry, material)
-	// var model = THREEx.Crates.createCrate0()
-	// model.scale.multiplyScalar(0.5)
-	model.castShadow = true
-	model.receiveShadow = true
-
-				
-	var nCubes = new THREE.Vector3(20/2,20/2,1)
-
-	// var texture = new THREE.TextureLoader().load('images/NewTennisBallColor.jpg')
-	var texture = new THREE.TextureLoader().load('images/Yeah-If-The-Lazy-Mexicans-Could-Quit-Raping-Everybody-ThatD-Be-Great-Funny-Donald-Trump-Meme-Image.jpg')
-	model.material.map = texture
-
-	var size = new THREE.Vector3(geometry.parameters.width*1.05
-			, geometry.parameters.height*1.05
-			, geometry.parameters.depth*1)
-	
-	for(var x = 0; x < nCubes.x; x++){
-		for(var y = 0; y < nCubes.y; y++){
-			for(var z = 0; z < nCubes.z; z++){
-				// var mesh = model.clone()
-				// model.geometry = model.geometry.clone()
-				
-				var geometry = new THREE.BoxGeometry(1,1,1)
-				var mesh = new THREE.Mesh(geometry, material)
-				mesh.castShadow = true
-				mesh.receiveShadow = true
-
-				change_uvs( geometry, 1 / nCubes.x, 1 / nCubes.y, x, y );
-				
-				mesh.position.x = (x-nCubes.x/2+0.5) * mesh.scale.x * size.x
-				mesh.position.y = (y-nCubes.y/2+0.5) * mesh.scale.y * size.y
-				mesh.position.z = (z-nCubes.z/2+0.5) * mesh.scale.z * size.z
-
-				mesh.position.y += 3 + nCubes.y/2 * size.y * mesh.scale.y
-			        scene.add(mesh)
-			        
-				var ammoControls = new THREEx.AmmoControls(mesh)
-				ammoWorld.add(ammoControls)	
-			}
-		}
-	}
-	
-	function change_uvs( geometry, unitx, unity, offsetx, offsety ) {
-		var faceVertexUvs = geometry.faceVertexUvs[ 0 ];
-		for ( var i = 0; i < faceVertexUvs.length; i ++ ) {
-			var uvs = faceVertexUvs[ i ];
-			for ( var j = 0; j < uvs.length; j ++ ) {
-				var uv = uvs[ j ];				
-				uv.x = ( uv.x + offsetx ) * unitx;
-				uv.y = ( uv.y + offsety ) * unity;
-			}
-		}
-	}
 })()
 
 ////////////////////////////////////////////////////////////////////////////////
