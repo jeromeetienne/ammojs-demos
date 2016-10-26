@@ -16,15 +16,16 @@
 	Playing with <a href="http://threejs.org" target="_blank">three.js</a>
 	and <a href="https://github.com/kripken/ammo.js/">ammo.js</a> 
 	- source on <a href="https://github.com/jeromeetienne/ammojs-demos/">github</a>
-	<br> Click to throw balls!
 	<br>
+	Here are some images
 	<a href="#images/Yeah-If-The-Lazy-Mexicans-Could-Quit-Raping-Everybody-ThatD-Be-Great-Funny-Donald-Trump-Meme-Image.jpg" onclick="javascript:location.reload()">trump</a>
 	-
-	<a href="#images/UV_Grid_Sm.jpg" onclick="javascript:location.reload()">UV Grid</a>
+	<a href="#images/threejs-logo.png" onclick="javascript:location.reload()">Three.js</a>
 	-
-	<a href="#images/BasketballColor.jpg" onclick="javascript:location.reload()">BasketballColor</a>
+	<a href="#images/WebGL_500px_June16.jpg" onclick="javascript:location.reload()">WebGL</a>
 	<br>
-	<input type="text" placeholder="Your image's url goes here" style='font-size:100%;'>
+	<b>Wanna try ?</b> <input type="text" placeholder="Your image's url goes here" style='font-size:100%;' size="30">
+	<br><span style='font-size: 130%'>Click to throw balls and destroy the wall!</span>
 </div><body style='margin: 0px; overflow: hidden; text-align:center;'><script>
 
 startUpTHREEjs(function(renderer, scene, camera, controls, onRenderFcts){
@@ -139,16 +140,16 @@ onRenderFcts.push(function(){
 	model.castShadow = true
 	model.receiveShadow = true
 
-	var defaultImageUrl = 'images/Yeah-If-The-Lazy-Mexicans-Could-Quit-Raping-Everybody-ThatD-Be-Great-Funny-Donald-Trump-Meme-Image.jpg'
+	var defaultImageUrl = 'images/threejs-logo.png'
 	if( location.hash.substring(1) !== '' ){
 		var url = decodeURIComponent(location.hash.substring(1))
-		
 	}else{
-		var url = 'images/Yeah-If-The-Lazy-Mexicans-Could-Quit-Raping-Everybody-ThatD-Be-Great-Funny-Donald-Trump-Meme-Image.jpg'
+		var url = defaultImageUrl
 	}
 	var texture = new THREE.TextureLoader().load(url, function(texture){
 		var textureAspect = texture.image.width / texture.image.height
-		var nCubes = new THREE.Vector3(10*textureAspect,10,1)
+		var wallHeight = 7
+		var nCubes = new THREE.Vector3(wallHeight*textureAspect,wallHeight,1)
 		buildCratesPile(nCubes)
 	}, undefined, function onError(){
 		alert('Cant load your image')

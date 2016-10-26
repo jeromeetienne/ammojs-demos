@@ -249,7 +249,7 @@ return
 ////////////////////////////////////////////////////////////////////////////////
 
 ;(function(){
-return
+// return
 	var geometry = new THREE.SphereGeometry(0.5, 16, 10)
 	var material = new THREE.MeshNormalMaterial({
 		wireframe: true
@@ -271,6 +271,7 @@ return
 	model.castShadow = true
 	model.receiveShadow = true
 	
+	var modeImpact = THREEx.createPoolBall()
 
 	var nBalls = 1
 	// var nBalls = 1
@@ -279,6 +280,9 @@ return
 		mesh.position.y = 3+Math.random()*3
 		mesh.position.x = (Math.random()-0.5)*15
 		mesh.position.z = (Math.random()-0.5)*15
+		
+		mesh.position.set(0,2,0)
+		
 	        scene.add(mesh)
 	        
 		var ammoControls = new THREEx.AmmoControls(mesh)
@@ -287,7 +291,7 @@ return
 
 		var collisionHappened = false
 
-		ammoControls.addEventListener('collided', function(event){
+		ammoControls.addEventListener('colliding', function(event){
 console.log(event.otherAmmoControls.object3d.name, event.btContactPoint.getAppliedImpulse())
 
 			if( collisionHappened === true )	return
@@ -297,10 +301,10 @@ console.log(event.otherAmmoControls.object3d.name, event.btContactPoint.getAppli
 			// if( appliedImpulse > 0.1 && event.otherAmmoControls.object3d.name === 'ground' ){
 			// 	sound1.play()
 			// }
-			
-			var model = THREEx.createPoolBall()
+
+			var model = modeImpact.clone()
 			scene.add(model)
-			
+
 			var appliedImpulse = event.btContactPoint.getAppliedImpulse()
 			model.scale.multiplyScalar(appliedImpulse * 0.2)
 			// console.log(appliedImpulse)			

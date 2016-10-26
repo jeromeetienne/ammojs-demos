@@ -24,12 +24,13 @@ THREEx.AmmoWorld = function(){
 
 THREEx.AmmoWorld.prototype.update = function(){
         var deltaTime = this._clock.getDelta();
-        // compute physics
-        this.physicsWorld.stepSimulation( deltaTime*1.5, 10 );
 
         if( this.collisionEnabled === true ){
                 this._updateCollisions()
         }
+
+        // compute physics
+        this.physicsWorld.stepSimulation( deltaTime, 10 );
 
         // update all ammoControls
         var btTransform = new Ammo.btTransform();
@@ -95,8 +96,8 @@ THREEx.AmmoWorld.prototype._updateCollisions = function(){
                         var ammoControls0 = getAmmoControls(manifold.getBody0())
                         var ammoControls1 = getAmmoControls(manifold.getBody1())
                         // dispatchEvent
-                        ammoControls0.dispatchEvent( { type: 'collided', otherAmmoControls: ammoControls1, btContactPoint: btContactPoint } );
-                        ammoControls1.dispatchEvent( { type: 'collided', otherAmmoControls: ammoControls0, btContactPoint: btContactPoint } );
+                        ammoControls0.dispatchEvent( { type: 'colliding', otherAmmoControls: ammoControls1, btContactPoint: btContactPoint } );
+                        ammoControls1.dispatchEvent( { type: 'colliding', otherAmmoControls: ammoControls0, btContactPoint: btContactPoint } );
                 }
         }
         return

@@ -1,12 +1,13 @@
-# Could that be a threex ?
-- like with workers by default
-- converting from three.js geometry
-- User Case : "for this object3d, make it in the physics"
-- those are ```controls```
-- THREEx.AmmoWorld()
-  - ammoWorld.add(ammoControls)/.remove(ammoControls)
-  - ammoWorld.update()
-- THREEx.AmmoControls(object3d)
+# Demo Domino
+- DONE find textures for the dominoes
+- make a spiral shape for the line of dominoes
+  - maybe to do a text in cursive writing
+- if possible, sounds/particles on collision
+
+# Demo Image-Destruction
+- if possible, sounds/particles on collision
+- maybe ability to renew experiences with a different images once one is completed
+- have a preset of multiple images in the 'info'
 
 # Possible demo
 - pool ball
@@ -36,17 +37,3 @@
 # Plan to import vehicule
 - take the three.js demo
 - port it bit by bit
-
-# Demo Domino
-- DONE find textures for the dominoes
-- make a spiral shape for the line of dominoes
-  - maybe to do a text in cursive writing
-- if possible, sounds/particles on collision
-
-# Demo Image-Destruction
-- DONE have the possibility to change your image
-  - be careful with the source image aspect
-  - store it in the url's hash
-- if possible, sounds/particles on collision
-- maybe ability to renew experiences with a different images once one is completed
-- have a preset of multiple images in the 'info'
