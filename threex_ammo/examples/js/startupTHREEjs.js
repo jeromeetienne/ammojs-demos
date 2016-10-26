@@ -8,6 +8,11 @@
  * - handle the loading in this funciton
  *   - document write for now
  * - have an options parameter
+ *   - like with webvr: true, rayinput: true
+ *   - ammoWorld: true
+ *   - cameraControls : 'type', or even your own controls
+ *     - cameraControls: function contructor(){}
+ *     - cameraControls: false to disable it
  */
 
 function startUpTHREEjs(callback){
