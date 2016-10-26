@@ -112,7 +112,6 @@ onRenderFcts.push(function(){
 	points.push( new THREE.Vector3(radius,0,-radius) );
 	points.push( new THREE.Vector3(radius,0,0) );
 	points.push( new THREE.Vector3(radius*2,0,0) );
-	
 
 	var geometry = new THREE.Geometry()
 
@@ -120,21 +119,20 @@ onRenderFcts.push(function(){
 	// var spline = new THREE.Spline( points );
 	var spline = new THREE.CatmullRomCurve3( points );
 	// spline.type = 'chordal';
-				
+
 	for ( i = 0; i < points.length * n_sub; i ++ ) {
 		var index = i / ( points.length * n_sub );
 		var position = spline.getPoint( index );
-
 		geometry.vertices[ i ] = new THREE.Vector3( position.x, position.y, position.z );
 	}
-	
+
 	var material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 1, linewidth: 3} );
-	
+
 	var line = new THREE.Line( geometry, material );
 	scene.add(line)
 
 
-	
+
 	var texture = new THREE.TextureLoader().load("images/dominos-free-stock-photo-illustration-of-a-domino-tile-15074-pbN2OI-clipart.png") 
 	var materials = [];
 	for ( var i = 0; i < 6; i ++ ) {
@@ -189,12 +187,21 @@ onRenderFcts.push(function(){
 	model.castShadow = true
 	model.receiveShadow = true
 
-	window.addEventListener( 'mousedown', function( event ) {
+	var eventCoord = new THREE.Vector2
+	renderer.domElement.addEventListener( 'mousedown', function( event ) {
 		if ( event.target !== renderer.domElement )	return
+		eventCoord.set(event.clientX, event.clientY)
+	}, false);
+
+	renderer.domElement.addEventListener( 'mouseup', function( event ) {
+		if ( event.target !== renderer.domElement )	return
+		if( Math.abs(eventCoord.x - event.clientX) > 5 )	return
+		if( Math.abs(eventCoord.y - event.clientY) > 5 )	return
+
 		if ( clickRequest === true ) return
 		clickRequest = true;
-		mouseCoords.x =   ( event.clientX / window.innerWidth ) * 2 - 1
-		mouseCoords.y = - ( event.clientY / window.innerHeight) * 2 + 1
+		mouseCoords.x =   ( eventCoord.x / window.innerWidth ) * 2 - 1
+		mouseCoords.y = - ( eventCoord.y / window.innerHeight) * 2 + 1
 	}, false );
 
 	onRenderFcts.push(function(){

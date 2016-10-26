@@ -19,7 +19,6 @@
 
 # Possible task
 - make a demo
-  - throw a ball into a cube of crates with trump
   - make domino and make it interactive
     - make it such as you can give the path from a string - how to join the letter
     - or simply make a bspline

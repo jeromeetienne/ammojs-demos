@@ -97,14 +97,14 @@ camera.add( listener );
 
 
 var audioLoader = new THREE.AudioLoader();
-var sound1 = new THREE.PositionalAudio( listener );
+var soundKick = new THREE.PositionalAudio( listener );
 audioLoader.load( 'sounds/kick.wav', function( buffer ) {
-	sound1.setBuffer( buffer );
-	sound1.setRefDistance( 20 );
-	// sound1.play()
+	soundKick.setBuffer( buffer );
+	soundKick.setRefDistance( 20 );
+	// soundKick.play()
 	// 
 });
-scene.add( sound1 );
+scene.add( soundKick );
 
 //////////////////////////////////////////////////////////////////////////////////
 //		set 3 point lighting						//
@@ -287,20 +287,21 @@ return
 	        
 		var ammoControls = new THREEx.AmmoControls(mesh)
 		ammoWorld.add(ammoControls)	
-		ammoControls.body.setRestitution(0.5)
+		ammoControls.body.setRestitution(0.6)
 
 		var collisionHappened = false
 
 		ammoControls.addEventListener('colliding', function(event){
 console.log(event.otherAmmoControls.object3d.name, event.btContactPoint.getAppliedImpulse())
 
+			var appliedImpulse = event.btContactPoint.getAppliedImpulse()
+			if( appliedImpulse > 0.1 && event.otherAmmoControls.object3d.name === 'ground' ){
+				soundKick.setVolume(appliedImpulse*0.2)
+				soundKick.play()
+			}
+
 			if( collisionHappened === true )	return
 			collisionHappened = true
-
-			// var appliedImpulse = event.btContactPoint.getAppliedImpulse()
-			// if( appliedImpulse > 0.1 && event.otherAmmoControls.object3d.name === 'ground' ){
-			// 	sound1.play()
-			// }
 
 			var model = modeImpact.clone()
 			scene.add(model)
@@ -309,11 +310,13 @@ console.log(event.otherAmmoControls.object3d.name, event.btContactPoint.getAppli
 			model.scale.multiplyScalar(appliedImpulse * 0.2)
 			// console.log(appliedImpulse)			
 
+			// soundKick.setVolume(q)
+			// soundKick.play()
+
 			var btVector3 = event.btContactPoint.getPositionWorldOnA()
 			model.position.x = btVector3.x()
 			model.position.y = btVector3.y()
 			model.position.z = btVector3.z()
-
 		})
 	}
 })()
@@ -544,12 +547,21 @@ return
 	model.castShadow = true
 	model.receiveShadow = true
 
-	window.addEventListener( 'mousedown', function( event ) {
+	var eventCoord = new THREE.Vector2
+	renderer.domElement.addEventListener( 'mousedown', function( event ) {
 		if ( event.target !== renderer.domElement )	return
+		eventCoord.set(event.clientX, event.clientY)
+	}, false);
+
+	renderer.domElement.addEventListener( 'mouseup', function( event ) {
+		if ( event.target !== renderer.domElement )	return
+		if( Math.abs(eventCoord.x - event.clientX) > 5 )	return
+		if( Math.abs(eventCoord.y - event.clientY) > 5 )	return
+
 		if ( clickRequest === true ) return
 		clickRequest = true;
-		mouseCoords.x =   ( event.clientX / window.innerWidth ) * 2 - 1
-		mouseCoords.y = - ( event.clientY / window.innerHeight) * 2 + 1
+		mouseCoords.x =   ( eventCoord.x / window.innerWidth ) * 2 - 1
+		mouseCoords.y = - ( eventCoord.y / window.innerHeight) * 2 + 1
 	}, false );
 
 	onRenderFcts.push(function(){

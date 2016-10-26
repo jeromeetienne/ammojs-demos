@@ -51,7 +51,6 @@ startUpTHREEjs(function(renderer, scene, camera, controls, onRenderFcts){
 camera.position.y = 10;
 camera.position.z = 20;
 camera.lookAt(new THREE.Vector3(0,3,0))
-controls.enabled = false
 
 //////////////////////////////////////////////////////////////////////////////////
 //		set 3 point lighting						//
@@ -226,14 +225,23 @@ onRenderFcts.push(function(){
 	model.castShadow = true
 	model.receiveShadow = true
 
-	window.addEventListener( 'mousedown', function( event ) {
+	var eventCoord = new THREE.Vector2
+	renderer.domElement.addEventListener( 'mousedown', function( event ) {
 		if ( event.target !== renderer.domElement )	return
+		eventCoord.set(event.clientX, event.clientY)
+	}, false);
+
+	renderer.domElement.addEventListener( 'mouseup', function( event ) {
+		if ( event.target !== renderer.domElement )	return
+		if( Math.abs(eventCoord.x - event.clientX) > 5 )	return
+		if( Math.abs(eventCoord.y - event.clientY) > 5 )	return
+
 		if ( clickRequest === true ) return
 		clickRequest = true;
-		mouseCoords.x =   ( event.clientX / window.innerWidth ) * 2 - 1
-		mouseCoords.y = - ( event.clientY / window.innerHeight) * 2 + 1
+		mouseCoords.x =   ( eventCoord.x / window.innerWidth ) * 2 - 1
+		mouseCoords.y = - ( eventCoord.y / window.innerHeight) * 2 + 1
 	}, false );
-
+	
 	onRenderFcts.push(function(){
 		if ( clickRequest === false ) return
 		clickRequest = false;
