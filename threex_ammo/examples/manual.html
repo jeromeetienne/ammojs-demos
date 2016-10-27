@@ -273,7 +273,7 @@ return
 	
 	var modeImpact = THREEx.createPoolBall()
 
-	var nBalls = 1
+	var nBalls = 100
 	// var nBalls = 1
 	for(var i = 0; i < nBalls; i++){
 	        var mesh = model.clone()
@@ -281,7 +281,7 @@ return
 		mesh.position.x = (Math.random()-0.5)*15
 		mesh.position.z = (Math.random()-0.5)*15
 		
-		mesh.position.set(0,2,0)
+		// mesh.position.set(0,2,0)
 		
 	        scene.add(mesh)
 	        
@@ -296,7 +296,7 @@ console.log(event.otherAmmoControls.object3d.name, event.btContactPoint.getAppli
 
 			var appliedImpulse = event.btContactPoint.getAppliedImpulse()
 			if( appliedImpulse > 0.1 && event.otherAmmoControls.object3d.name === 'ground' ){
-				soundKick.setVolume(appliedImpulse*0.2)
+				soundKick.setVolume(appliedImpulse*0.3)
 				soundKick.play()
 			}
 
@@ -308,10 +308,6 @@ console.log(event.otherAmmoControls.object3d.name, event.btContactPoint.getAppli
 
 			var appliedImpulse = event.btContactPoint.getAppliedImpulse()
 			model.scale.multiplyScalar(appliedImpulse * 0.2)
-			// console.log(appliedImpulse)			
-
-			// soundKick.setVolume(q)
-			// soundKick.play()
 
 			var btVector3 = event.btContactPoint.getPositionWorldOnA()
 			model.position.x = btVector3.x()
