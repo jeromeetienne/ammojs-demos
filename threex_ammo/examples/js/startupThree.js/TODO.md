@@ -8,6 +8,9 @@
 # TODO
 - handle the loading in this funciton
   - document write for now
+- add webvr options
+- add rayinput option
+- add ammoWorld options
 - have an options parameter
   - like with webvr: true, rayinput: true
   - ammoWorld: true

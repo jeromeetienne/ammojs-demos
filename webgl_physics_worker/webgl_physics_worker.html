@@ -13,7 +13,7 @@
 
 	// init renderer
 	var renderer	= new THREE.WebGLRenderer();
-	renderer.setClearColor(new THREE.Color('lightgrey'), 1)
+	// renderer.setClearColor(new THREE.Color('lightgrey'), 1)
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
 
@@ -73,9 +73,8 @@ light.position.set(1,1,0.5)
 scene.add(light)
 ;(function(){
         var FLOOR_SIZE = 100;
-        var FLOOR_HEIGHT = -56
 	
-        var geometry = new THREE.BoxGeometry(FLOOR_SIZE,FLOOR_SIZE,FLOOR_SIZE)
+        var geometry = new THREE.BoxGeometry(FLOOR_SIZE,1,FLOOR_SIZE)
         var material = new THREE.MeshPhongMaterial({
                 map: new THREE.TextureLoader().load("textures/cube3.jpg", function onLoad(texture){
 			texture.wrapS = THREE.RepeatWrapping
@@ -84,12 +83,12 @@ scene.add(light)
 		})
         });
 	var mesh = new THREE.Mesh(geometry, material)
-	mesh.position.y = FLOOR_HEIGHT
+	mesh.position.y = -6 - mesh.geometry.parameters.height/2
         scene.add(mesh)
 })()
 </script>
 <script>
-        var numBoxes = 500
+        var numBoxes = 1000
 
         var boxMaterials = [];
         var boxMeshes = [];        
