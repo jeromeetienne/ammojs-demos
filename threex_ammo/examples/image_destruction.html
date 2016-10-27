@@ -10,7 +10,7 @@
 <script src="../../vendor/threex.sportballs/threex.sportballs.js"></script>
 <script>THREEx.SportBalls.baseURL='../../vendor/threex.sportballs/'</script>
 
-<script src='js/startupTHREEjs.js'></script>
+<script src='js/startupThree.js/startupThree.js'></script>
 
 <div id='infoText' style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px; color: white;'>
 	Playing with <a href="http://threejs.org" target="_blank">three.js</a>
@@ -28,7 +28,7 @@
 	<br><span style='font-size: 130%'>Click to throw balls and destroy the wall!</span>
 </div><body style='margin: 0px; overflow: hidden; text-align:center;'><script>
 
-startUpTHREEjs(function(renderer, scene, camera, controls, onRenderFcts){
+startUpTHREEjs(window, {}, function(demo){
 
 ////////////////////////////////////////////////////////////////////////////////
 //          setup info image url

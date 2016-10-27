@@ -10,7 +10,7 @@
 <script src="../../vendor/threex.sportballs/threex.sportballs.js"></script>
 <script>THREEx.SportBalls.baseURL='../../vendor/threex.sportballs/'</script>
 
-<script src='js/startupTHREEjs.js'></script>
+<script src='js/startupThree.js/startupThree.js'></script>
 
 <div style='position: absolute; top: 0px; width: 100%;font-family:arial; font-weight: bolder; padding-top: 5px; color: white;'>
 	Playing with <a href="http://threejs.org" target="_blank">three.js</a>
@@ -19,7 +19,7 @@
 	<br> Click to throw balls!
 </div><body style='margin: 0px; overflow: hidden; text-align:center;'><script>
 
-startUpTHREEjs(function(renderer, scene, camera, controls, onRenderFcts){
+startUpTHREEjs(window, {}, function(demo){
 
 camera.position.y = 10;
 camera.position.z = 20;
@@ -34,31 +34,27 @@ camera.lookAt(new THREE.Vector3(0,3,0))
 	var light	= new THREE.AmbientLight( 0x020202 ) 
 	scene.add( light )
 	// add a light in front
-	var light	= new THREE.DirectionalLight('white', 1)
+	var light	= new THREE.DirectionalLight('white', 0.2)
 	light.position.set(0.5, 0.5, 2)
 	scene.add( light ) 
-	// add a light behind 
-	var light	= new THREE.DirectionalLight('white', 0.75)
-	light.position.set(-0.5, -0.5, -2)
-	scene.add( light )		
 })()
 
 
 ;(function(){
-	var dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+	var dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
 	dirLight.position.set( 15, 15, 15 );
 	dirLight.castShadow = true;
-	dirLight.shadow.bias = 0.005
+	dirLight.shadow.bias = 0.001
 	dirLight.shadow.camera.near = 1;
 	dirLight.shadow.camera.far = 50;
 	dirLight.shadow.camera.right = 25;
 	dirLight.shadow.camera.left = - 25;
 	dirLight.shadow.camera.top	= 25;
 	dirLight.shadow.camera.bottom = - 25;
-	dirLight.shadow.mapSize.width = 2048;
-	dirLight.shadow.mapSize.height = 2048;
+	dirLight.shadow.mapSize.x = 1024;
+	dirLight.shadow.mapSize.y = 1024;
 	scene.add( dirLight );
-
+window.dirLight = dirLight
 	// scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );	
 })()
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +72,7 @@ onRenderFcts.push(function(){
 
 ;(function(){
 // return
-	var geometry = new THREE.BoxGeometry(120,0.1,120)
+	var geometry = new THREE.BoxGeometry(40,0.1,40)
         var material = new THREE.MeshPhongMaterial({
 		map: new THREE.TextureLoader().load("../../textures/grid.png", function onLoad(texture){
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -106,7 +102,7 @@ onRenderFcts.push(function(){
 ;(function(){
 // return
 	var points = [];
-	var radius = 30
+	var radius = 10
 	points.push( new THREE.Vector3(0,0,0) );
 	points.push( new THREE.Vector3(0,0,-radius) );
 	points.push( new THREE.Vector3(radius,0,-radius) );
@@ -129,6 +125,8 @@ onRenderFcts.push(function(){
 	var material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 1, linewidth: 3} );
 
 	var line = new THREE.Line( geometry, material );
+	line.position.x -= 5
+	line.position.y  = 1
 	scene.add(line)
 
 
@@ -145,11 +143,11 @@ onRenderFcts.push(function(){
 	var geometry = new THREE.BoxGeometry(0.5,1,0.25)
 	var material = new THREE.MeshFaceMaterial(materials)
 	var model = new THREE.Mesh(geometry, material)
-	model.scale.multiplyScalar(4)
+	model.scale.multiplyScalar(2)
 	model.castShadow = true
 	model.receiveShadow = true
 	
-	var nDominoes = 40
+	var nDominoes = 30
 	for(var i = 0; i < nDominoes; i++){
 		var index = i/nDominoes
 		var mesh = model.clone()
@@ -157,6 +155,7 @@ onRenderFcts.push(function(){
 
 		var position = spline.getPoint( index );
 		position.y = mesh.geometry.parameters.height/2
+		position.add(line.position)
 		mesh.position.copy(position)
 		
 		// mesh.rotation.copy(rotation)
@@ -183,7 +182,7 @@ onRenderFcts.push(function(){
 	// var model = new THREE.Mesh(geometry, material)
 	// var model = THREEx.SportBalls.createBasket()
 	var model = THREEx.SportBalls.createSoftball()
-	model.scale.multiplyScalar(2)
+	model.scale.multiplyScalar(1)
 	model.castShadow = true
 	model.receiveShadow = true
 

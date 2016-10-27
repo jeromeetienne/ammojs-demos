@@ -1,4 +1,8 @@
-function startUpTHREEjs(export, callback){
+function startUpTHREEjs(exports, options, callback){
+	
+	// handle options default values
+	options.stats = options.stats !== undefined ? options.stats : true
+	options.cameraControls = options.cameraControls !== undefined ? options.cameraControls : 'OrbitControls'
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Init
@@ -21,8 +25,13 @@ function startUpTHREEjs(export, callback){
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
 	camera.position.z = 10;
-	var controls	= new THREE.OrbitControls(camera)
-	controls.enableKeys = false
+	if( options.cameraControls === 'OrbitControls' ){
+		var controls	= new THREE.OrbitControls(camera)
+	}else if( options.cameraControls === false ){
+		var controls = null
+	}else{
+		console.assert(false, 'unknown options.cameraControls: ' + options.cameraControls)
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the whole thing on the page
@@ -40,13 +49,15 @@ function startUpTHREEjs(export, callback){
 		renderer.render( scene, camera );		
 	})
 	
-        var statsFrame = new Stats();
-        statsFrame.domElement.style.position = 'absolute';
-        statsFrame.domElement.style.top = '0px';
-        document.body.appendChild( statsFrame.domElement );
-	onRenderFcts.push(function(){
-		statsFrame.update()
-	})
+	if( options.stats === true ){
+	        var statsFrame = new Stats();
+	        statsFrame.domElement.style.position = 'absolute';
+	        statsFrame.domElement.style.top = '0px';
+	        document.body.appendChild( statsFrame.domElement );
+		onRenderFcts.push(function(){
+			statsFrame.update()
+		})		
+	}
 	
 	// run the rendering loop
 	var lastTimeMsec= null
@@ -67,5 +78,11 @@ function startUpTHREEjs(export, callback){
 	//		Code Separator
 	//////////////////////////////////////////////////////////////////////////////
 	
-	callback( renderer, scene, camera, controls, onRenderFcts )
+	exports.renderer = renderer
+	exports.scene = scene
+	exports.camera = camera
+	exports.controls = controls
+	exports.onRenderFcts = onRenderFcts
+	
+	callback(exports)
 }
